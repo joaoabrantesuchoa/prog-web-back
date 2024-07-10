@@ -1,6 +1,6 @@
 # Corretor - Fácil
 
-Bem-vindo ao projeto Corretor Fácil! Este repositório contém um aplicativo de correção de redações automatizado que utiliza técnicas de processamento de linguagem natural (NLP) e aprendizado de máquina para avaliar e fornecer feedback sobre redações em língua portuguesa. O sistema possui duas interfaces: uma para alunos e outra para professores.
+Bem-vindo ao projeto Corretor Fácil! Este repositório contém um aplicativo de correção de redações manual que permite ao professor corrigir redações de forma rápida e integrada, sendo capaz de dar feedback rapidamente aos alunos. Também possibilita ao aluno a visualização dos comentários e estatísticas de suas redações.
 
 ## Funcionalidades
 
