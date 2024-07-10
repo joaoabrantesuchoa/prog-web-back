@@ -1,0 +1,16 @@
+{
+  "name": "prog-web-back",
+  "version": "1.0.0",
+  "description": "Bem-vindo ao projeto Corretor Fácil! Este repositório contém um aplicativo de correção de redações manual que permite ao professor corrigir redações de forma rápida e integrada, sendo capaz de dar feedback rapidamente aos alunos. Também possibilita ao aluno a visualização dos comentários e estatísticas de suas redações.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
