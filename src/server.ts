@@ -5,6 +5,8 @@ import multer from "multer";
 const app = express();
 const port = 3000;
 
+app.use(express.json());
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./uploads/");
@@ -16,11 +18,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.json());
-
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello Wordl!");
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
 
 app.post(
