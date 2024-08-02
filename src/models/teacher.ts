@@ -3,37 +3,42 @@ import { PrismaClient, Professor } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export class Teacher {
-  private prisma = prisma;
+  static prisma = prisma;
 
-  async getAllTeachers(): Promise<Professor[]> {
+  static async getAllTeachers(): Promise<Professor[]> {
     return this.prisma.professor.findMany();
   }
 
-  async getTeacherById(id: number): Promise<Professor | null> {
+  static async getTeacherById(id: number): Promise<Professor | null> {
     return this.prisma.professor.findUnique({
       where: { id },
     });
   }
 
-  async createTeacher(data: Omit<Professor, "id">): Promise<Professor> {
+  static async createTeacher(data: Omit<Professor, "id">): Promise<Professor> {
     return this.prisma.professor.create({
       data,
     });
   }
 
-  async updateTeacher(
-    id: number,
-    data: Partial<Omit<Professor, "id">>
+  static async updateTeacher(
+    updateData: { id: number } & Partial<Omit<Teacher, "id">>
   ): Promise<Professor | null> {
+    const { id, ...data } = updateData;
     return this.prisma.professor.update({
       where: { id },
       data,
     });
   }
 
-  async deleteTeacher(id: number): Promise<void> {
-    await this.prisma.professor.delete({
-      where: { id },
-    });
+  static async deleteTeacher(id: number): Promise<boolean> {
+    try {
+      await this.prisma.professor.delete({
+        where: { id },
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }
