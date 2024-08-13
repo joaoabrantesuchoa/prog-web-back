@@ -13,3 +13,7 @@ Bem-vindo ao projeto Extensão - Helper! Este repositório contém um aplicativo
 1) Visualização da progressão da carga horária e atividades dos alunos para cada projeto.
 2) Criação de projetos e adição de alunos.
 3) Customização dos projetos, indicando as atividades e a carga horária adequada para cada uma delas.
+
+### Documentação
+
+- Swagger Hub: https://app.swaggerhub.com/apis/JOAOABRANTESUCHOA/projeto-extensao/1.0.0
