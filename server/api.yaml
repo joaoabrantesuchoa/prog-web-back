@@ -109,25 +109,6 @@ paths:
       - Professor
       description: Retorna todos os professores registrados
       operationId: getProfessores
-      parameters:
-      - name: skip
-        in: query
-        description: Número de registros a pular
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          format: int32
-      - name: limit
-        in: query
-        description: Número máximo de registros a retornar
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          format: int32
       responses:
         "200":
           description: Lista de todos os professores
@@ -224,25 +205,6 @@ paths:
       - Projeto
       description: Retorna todos os projetos registrados
       operationId: getProjetos
-      parameters:
-      - name: skip
-        in: query
-        description: Número de registros a pular
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          format: int32
-      - name: limit
-        in: query
-        description: Número máximo de registros a retornar
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          format: int32
       responses:
         "200":
           description: Lista de todos os projetos
@@ -339,25 +301,6 @@ paths:
       - RegistroHora
       description: Retorna todos os registros de horas
       operationId: getRegistrosHora
-      parameters:
-      - name: skip
-        in: query
-        description: Número de registros a pular
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          format: int32
-      - name: limit
-        in: query
-        description: Número máximo de registros a retornar
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          format: int32
       responses:
         "200":
           description: Lista de todos os registros de horas
