@@ -4,13 +4,15 @@
   "description": "Bem-vindo ao projeto Corretor Fácil! Este repositório contém um aplicativo de correção de redações manual que permite ao professor corrigir redações de forma rápida e integrada, sendo capaz de dar feedback rapidamente aos alunos. Também possibilita ao aluno a visualização dos comentários e estatísticas de suas redações.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "dev": "ts-node src/server.ts",
-    "db:up": "",
-    "db:up-docker": "",
-    "setup": "npm install && npm run build && docker-compose up -d"
+    "build": "tsc --build --clean",
+    "start": "NODE_ENV=production node dist/server.js",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
+    "setup": "npm install && npm run build && prisma migrate deploy && docker-compose up -d",
+    "prismaSetup": "npx prisma migrate dev && npx prisma generate",
+    "lint": "eslint 'src/**/*.{ts,js}' --fix",
+    "format": "prettier --write 'src/**/*.{ts,js,json,md}'",
+    "clean": "rm -rf dist node_modules",
+    "watch": "tsc --watch"
   },
   "keywords": [],
   "author": "",
