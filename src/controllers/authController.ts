@@ -14,7 +14,7 @@ export const registerUser = async (req: Request, res: Response) => {
     });
     res.json(user);
   } catch (error) {
-    res.status(500).json({ error: "Failed to register user" });
+    res.status(500).json({ error: `Failed to register user: ${error}` });
   }
 };
 
@@ -25,7 +25,7 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    const isPasswordValid = await bcrypt.compare(
+    const isPasswordValid = bcrypt.compare(
       req.body.password,
       user.password
     );
@@ -36,7 +36,7 @@ export const login = async (req: Request, res: Response) => {
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
     res.json({ token });
   } catch (error) {
-    res.status(500).json({ error: "Failed to login" });
+    res.status(500).json({ error: `Failed to login: ${error}` });
   }
 };
 

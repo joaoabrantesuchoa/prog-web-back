@@ -22,7 +22,7 @@ model Usuario {
   id        Int        @id @default(autoincrement())
   nome      String     @db.VarChar(100)
   email     String     @unique @db.VarChar(100)
-  password  Int        @unique
+  password  String     @unique
   role      Role
   Professor Professor?
   Aluno     Aluno?
@@ -36,10 +36,11 @@ model Professor {
 }
 
 model Aluno {
-  id        Int            @id @default(autoincrement())
-  registros RegistroHora[]
-  usuario   Usuario        @relation(fields: [usuarioId], references: [id])
-  usuarioId Int            @unique
+  id             Int              @id @default(autoincrement())
+  registros      RegistroHora[]
+  usuario        Usuario          @relation(fields: [usuarioId], references: [id])
+  usuarioId      Int              @unique
+  AtividadeAluno AtividadeAluno[]
 }
 
 model Projeto {
@@ -49,6 +50,7 @@ model Projeto {
   professor   Professor      @relation(fields: [professorId], references: [id])
   professorId Int
   registros   RegistroHora[]
+  Atividade   Atividade[]
 }
 
 model RegistroHora {
@@ -59,4 +61,22 @@ model RegistroHora {
   projetoId        Int
   horasTrabalhadas Int
   dataRegistro     DateTime @default(now())
+}
+
+model Atividade {
+  id               Int              @id @default(autoincrement())
+  titulo           String           @db.VarChar(200)
+  descricao        String?
+  horasNecessarias Int
+  projeto          Projeto          @relation(fields: [projetoId], references: [id])
+  projetoId        Int
+  alunos           AtividadeAluno[]
+}
+
+model AtividadeAluno {
+  id          Int       @id @default(autoincrement())
+  atividade   Atividade @relation(fields: [atividadeId], references: [id])
+  atividadeId Int
+  aluno       Aluno     @relation(fields: [alunoId], references: [id])
+  alunoId     Int
 }
