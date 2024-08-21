@@ -18,7 +18,7 @@ export enum Role {
 export const authMiddleware = async (
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
@@ -44,7 +44,7 @@ export const authMiddleware = async (
     req.user = user;
 
     next();
-  } catch (err) {
-    res.status(401).send("Please authenticate");
+  } catch (error) {
+    res.status(401).send(`Please authenticate: ${error}`);
   }
 };
