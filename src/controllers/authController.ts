@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { User } from "../domain/models/user";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { Student } from "../domain/models/student";
+import { Teacher } from "../domain/models/teacher";
 
 const JWT_SECRET = process.env.JWT || "";
 
@@ -12,6 +14,19 @@ export const registerUser = async (req: Request, res: Response) => {
       ...req.body,
       password: hashedPassword,
     });
+
+    if (user) {
+      if (user.role === "Aluno") {
+        await Student.createStudent({
+          usuarioId: user.id,
+        });
+      } else {
+        await Teacher.createTeacher({
+          usuarioId: user.id,
+        });
+      }
+    }
+
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: `Failed to register user: ${error}` });
@@ -21,14 +36,16 @@ export const registerUser = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const user = await User.getUserByEmail(req.body.email);
+
     if (!user) {
-      return res.status(400).json({ error: "Invalid email or password" });
+      return res.status(400).json({ error: "Invalid email" });
     }
 
-    const isPasswordValid = bcrypt.compare(
+    const isPasswordValid = await bcrypt.compare(
       req.body.password,
-      user.password
+      user.password,
     );
+
     if (!isPasswordValid) {
       return res.status(400).json({ error: "Invalid email or password" });
     }

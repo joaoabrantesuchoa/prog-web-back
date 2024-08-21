@@ -16,7 +16,7 @@ export class TimeRecord {
   }
 
   async createTimeRecord(
-    data: Omit<RegistroHora, "id">
+    data: Omit<RegistroHora, "id">,
   ): Promise<RegistroHora> {
     return this.prisma.registroHora.create({
       data,
@@ -25,7 +25,7 @@ export class TimeRecord {
 
   async updateTimeRecord(
     id: number,
-    data: Partial<Omit<RegistroHora, "id">>
+    data: Partial<Omit<RegistroHora, "id">>,
   ): Promise<RegistroHora | null> {
     return this.prisma.registroHora.update({
       where: { id },

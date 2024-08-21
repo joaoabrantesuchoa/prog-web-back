@@ -22,7 +22,7 @@ export class Student {
   }
 
   static async updateStudent(
-    updateData: { id: number } & Partial<Omit<Aluno, "id">>
+    updateData: { id: number } & Partial<Omit<Aluno, "id">>,
   ): Promise<Aluno | null> {
     const { id, ...data } = updateData;
     return this.prisma.aluno.update({
@@ -31,14 +31,11 @@ export class Student {
     });
   }
 
-  static async deleteStudent(id: number): Promise<boolean> {
-    try {
-      await this.prisma.aluno.delete({
-        where: { id },
-      });
-      return true;
-    } catch (error) {
-      return false;
-    }
+  static async deleteStudent(id: number): Promise<Student> {
+    const response = await this.prisma.aluno.delete({
+      where: { id },
+    });
+
+    return response;
   }
 }

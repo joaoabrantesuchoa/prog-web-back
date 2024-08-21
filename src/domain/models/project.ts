@@ -23,7 +23,7 @@ export class Project {
 
   async updateProject(
     id: number,
-    data: Partial<Omit<Projeto, "id">>
+    data: Partial<Omit<Projeto, "id">>,
   ): Promise<Projeto | null> {
     return this.prisma.projeto.update({
       where: { id },

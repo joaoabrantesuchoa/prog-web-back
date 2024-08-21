@@ -22,7 +22,7 @@ export class Teacher {
   }
 
   static async updateTeacher(
-    updateData: { id: number } & Partial<Omit<Teacher, "id">>
+    updateData: { id: number } & Partial<Omit<Teacher, "id">>,
   ): Promise<Professor | null> {
     const { id, ...data } = updateData;
     return this.prisma.professor.update({
@@ -31,14 +31,11 @@ export class Teacher {
     });
   }
 
-  static async deleteTeacher(id: number): Promise<boolean> {
-    try {
-      await this.prisma.professor.delete({
-        where: { id },
-      });
-      return true;
-    } catch (error) {
-      return false;
-    }
+  static async deleteTeacher(id: number): Promise<Teacher> {
+    const response = await this.prisma.professor.delete({
+      where: { id },
+    });
+
+    return response;
   }
 }

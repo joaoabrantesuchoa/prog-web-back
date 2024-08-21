@@ -6,7 +6,7 @@ export const getAllTeachers = async (req: Request, res: Response) => {
     const teachers = await Teacher.getAllTeachers();
     res.json(teachers);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch teachers" });
+    res.status(500).json({ error: `Failed to fetch teachers ${error}` });
   }
 };
 
@@ -21,7 +21,7 @@ export const getTeacherById = async (req: Request, res: Response) => {
       res.status(404).json({ error: "Teacher not found" });
     }
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch teacher" });
+    res.status(500).json({ error: `Failed to fetch teacher ${error}` });
   }
 };
 
@@ -30,7 +30,7 @@ export const createTeacher = async (req: Request, res: Response) => {
     const teacher = await Teacher.createTeacher(req.body);
     res.status(201).json(teacher);
   } catch (error) {
-    res.status(500).json({ error: "Failed to create teacher" });
+    res.status(500).json({ error: `Failed to create teacher ${error}` });
   }
 };
 
@@ -49,7 +49,7 @@ export const updateTeacher = async (req: Request, res: Response) => {
       res.status(404).json({ error: "Teacher not found" });
     }
   } catch (error) {
-    res.status(500).json({ error: "Failed to update teacher" });
+    res.status(500).json({ error: `Failed to update teacher ${error}` });
   }
 };
 
@@ -64,6 +64,6 @@ export const deleteTeacher = async (req: Request, res: Response) => {
       res.status(404).json({ error: "Teacher not found" });
     }
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete teacher" });
+    res.status(500).json({ error: `Failed to delete teacher ${error}` });
   }
 };

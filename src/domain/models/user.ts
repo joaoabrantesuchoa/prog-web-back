@@ -29,7 +29,7 @@ export class User {
 
   static async updateUser(
     id: number,
-    data: Partial<Omit<Usuario, "id">>
+    data: Partial<Omit<Usuario, "id">>,
   ): Promise<Usuario | null> {
     return this.prisma.usuario.update({
       where: { id },
