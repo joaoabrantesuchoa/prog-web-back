@@ -1,15 +1,22 @@
 // src/middleware/auth.ts
 import { Request, Response, NextFunction } from "express";
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
+import { User } from "../domain/models/user";
 
 const SECRET_KEY: Secret = process.env.JWT || "secret";
 
 interface CustomRequest extends Request {
+  user?: User;
   token?: string | jwt.JwtPayload;
 }
 
+export enum Role {
+  Aluno,
+  Professor,
+}
+
 export const authMiddleware = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -20,8 +27,21 @@ export const authMiddleware = async (
       throw new Error();
     }
 
-    const decoded = jwt.verify(token, SECRET_KEY);
-    (req as CustomRequest).token = decoded;
+    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload & {
+      role: Role;
+    };
+
+    if (!decoded.id) {
+      throw new Error("Token missing user id");
+    }
+
+    const user = await User.getUserById(decoded.id);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    req.user = user;
 
     next();
   } catch (err) {
