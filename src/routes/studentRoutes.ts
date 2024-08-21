@@ -6,17 +6,18 @@ import {
   updateStudent,
   deleteStudent,
 } from "../controllers/studentController";
+import { authMiddleware } from "../middleware/token";
 
 const router = Router();
 
-router.get("/", getAllStudents);
+router.get("/", authMiddleware, getAllStudents);
 
-router.get("/:id", getStudentById);
+router.get("/:id", authMiddleware, getStudentById);
 
-router.post("/", createStudent);
+router.post("/", authMiddleware, createStudent);
 
-router.put("/:id", updateStudent);
+router.put("/:id", authMiddleware, updateStudent);
 
-router.delete("/:id", deleteStudent);
+router.delete("/:id", authMiddleware, deleteStudent);
 
 export default router;
