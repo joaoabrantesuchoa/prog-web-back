@@ -1,16 +1,98 @@
 openapi: 3.0.0
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/JOAOABRANTESUCHOA/projeto-extensao/1.0.0
 info:
+  version: "1.0.0"
   title: home-iot-api
   description: The API for the EatBacon IOT project
-  version: 1.0.0
-servers:
-- url: https://virtserver.swaggerhub.com/JOAOABRANTESUCHOA/projeto-extensao/1.0.0
-  description: SwaggerHub API Auto Mocking
 paths:
+  /login:
+    post:
+      tags:
+        - Autenticação
+      summary: Realiza o login de um usuário
+      description: Autentica o usuário e retorna um token JWT se as credenciais estiverem corretas.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        "200":
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token JWT para autenticação
+        "401":
+          description: Credenciais inválidas
+
+  /logout:
+    post:
+      tags:
+        - Autenticação
+      summary: Realiza o logout do usuário
+      description: Invalida o token de autenticação do usuário.
+      operationId: logoutUser
+      responses:
+        "200":
+          description: Logout realizado com sucesso
+
+  /register:
+    post:
+      tags:
+        - Autenticação
+      summary: Registra um novo usuário
+      description: Cria uma nova conta de usuário.
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                role:
+                  type: string
+                  enum:
+                    - Professor
+                    - Aluno
+      responses:
+        "201":
+          description: Usuário registrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Usuario"
+        "400":
+          description: Requisição inválida ou e-mail já registrado
+
   /alunos:
     get:
       tags:
-      - Aluno
+        - Aluno
       description: Retorna todos os alunos registrados
       operationId: getAlunos
       responses:
@@ -21,92 +103,87 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Aluno'
+                  $ref: "#/components/schemas/Aluno"
     post:
       tags:
-      - Aluno
+        - Aluno
       description: Cria um novo aluno
       operationId: createAluno
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AlunoInput'
-        required: true
+              $ref: "#/components/schemas/AlunoInput"
       responses:
         "201":
           description: Aluno criado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Aluno'
+                $ref: "#/components/schemas/Aluno"
   /alunos/{id}:
     get:
       tags:
-      - Aluno
+        - Aluno
       description: Obtém um aluno pelo ID
       operationId: getAlunoById
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         "200":
           description: Detalhes do aluno
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Aluno'
+                $ref: "#/components/schemas/Aluno"
     put:
       tags:
-      - Aluno
+        - Aluno
       description: Atualiza um aluno pelo ID
       operationId: updateAluno
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AlunoInput'
-        required: true
+              $ref: "#/components/schemas/AlunoInput"
       responses:
         "200":
           description: Aluno atualizado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Aluno'
+                $ref: "#/components/schemas/Aluno"
     delete:
       tags:
-      - Aluno
+        - Aluno
       description: Exclui um aluno pelo ID
       operationId: deleteAluno
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         "204":
           description: Aluno excluído com sucesso
+
   /professores:
     get:
       tags:
-      - Professor
+        - Professor
       description: Retorna todos os professores registrados
       operationId: getProfessores
       responses:
@@ -117,92 +194,87 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Professor'
+                  $ref: "#/components/schemas/Professor"
     post:
       tags:
-      - Professor
+        - Professor
       description: Cria um novo professor
       operationId: createProfessor
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProfessorInput'
-        required: true
+              $ref: "#/components/schemas/ProfessorInput"
       responses:
         "201":
           description: Professor criado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Professor'
+                $ref: "#/components/schemas/Professor"
   /professores/{id}:
     get:
       tags:
-      - Professor
+        - Professor
       description: Obtém um professor pelo ID
       operationId: getProfessorById
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         "200":
           description: Detalhes do professor
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Professor'
+                $ref: "#/components/schemas/Professor"
     put:
       tags:
-      - Professor
+        - Professor
       description: Atualiza um professor pelo ID
       operationId: updateProfessor
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProfessorInput'
-        required: true
+              $ref: "#/components/schemas/ProfessorInput"
       responses:
         "200":
           description: Professor atualizado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Professor'
+                $ref: "#/components/schemas/Professor"
     delete:
       tags:
-      - Professor
+        - Professor
       description: Exclui um professor pelo ID
       operationId: deleteProfessor
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         "204":
           description: Professor excluído com sucesso
+
   /projetos:
     get:
       tags:
-      - Projeto
+        - Projeto
       description: Retorna todos os projetos registrados
       operationId: getProjetos
       responses:
@@ -213,92 +285,87 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Projeto'
+                  $ref: "#/components/schemas/Projeto"
     post:
       tags:
-      - Projeto
+        - Projeto
       description: Cria um novo projeto
       operationId: createProjeto
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProjetoInput'
-        required: true
+              $ref: "#/components/schemas/ProjetoInput"
       responses:
         "201":
           description: Projeto criado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Projeto'
+                $ref: "#/components/schemas/Projeto"
   /projetos/{id}:
     get:
       tags:
-      - Projeto
+        - Projeto
       description: Obtém um projeto pelo ID
       operationId: getProjetoById
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         "200":
           description: Detalhes do projeto
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Projeto'
+                $ref: "#/components/schemas/Projeto"
     put:
       tags:
-      - Projeto
+        - Projeto
       description: Atualiza um projeto pelo ID
       operationId: updateProjeto
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProjetoInput'
-        required: true
+              $ref: "#/components/schemas/ProjetoInput"
       responses:
         "200":
           description: Projeto atualizado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Projeto'
+                $ref: "#/components/schemas/Projeto"
     delete:
       tags:
-      - Projeto
+        - Projeto
       description: Exclui um projeto pelo ID
       operationId: deleteProjeto
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         "204":
           description: Projeto excluído com sucesso
+
   /registrosHora:
     get:
       tags:
-      - RegistroHora
+        - RegistroHora
       description: Retorna todos os registros de horas
       operationId: getRegistrosHora
       responses:
@@ -309,121 +376,177 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RegistroHora'
+                  $ref: "#/components/schemas/RegistroHora"
     post:
       tags:
-      - RegistroHora
+        - RegistroHora
       description: Cria um novo registro de hora
       operationId: createRegistroHora
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegistroHoraInput'
-        required: true
+              $ref: "#/components/schemas/RegistroHoraInput"
       responses:
         "201":
           description: Registro de hora criado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegistroHora'
+                $ref: "#/components/schemas/RegistroHora"
   /registrosHora/{id}:
     get:
       tags:
-      - RegistroHora
+        - RegistroHora
       description: Obtém um registro de hora pelo ID
       operationId: getRegistroHoraById
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         "200":
           description: Detalhes do registro de hora
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegistroHora'
+                $ref: "#/components/schemas/RegistroHora"
     put:
       tags:
-      - RegistroHora
+        - RegistroHora
       description: Atualiza um registro de hora pelo ID
       operationId: updateRegistroHora
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegistroHoraInput'
-        required: true
+              $ref: "#/components/schemas/RegistroHoraInput"
       responses:
         "200":
           description: Registro de hora atualizado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegistroHora'
+                $ref: "#/components/schemas/RegistroHora"
     delete:
       tags:
-      - RegistroHora
+        - RegistroHora
       description: Exclui um registro de hora pelo ID
       operationId: deleteRegistroHora
       parameters:
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         "204":
           description: Registro de hora excluído com sucesso
-  /projetos/{projetoId}/alunos/{alunoId}/horas:
+
+  /atividades:
     get:
       tags:
-      - RegistroHora
-      description: Retorna todas as horas registradas por um aluno específico em um projeto específico
-      operationId: getHorasByProjetoAndAluno
-      parameters:
-      - name: projetoId
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
-      - name: alunoId
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - Atividade
+      description: Retorna todas as atividades
+      operationId: getAtividades
       responses:
         "200":
-          description: Lista de todas as horas registradas
+          description: Lista de todas as atividades
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RegistroHora'
+                  $ref: "#/components/schemas/Atividade"
+    post:
+      tags:
+        - Atividade
+      description: Cria uma nova atividade
+      operationId: createAtividade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AtividadeInput"
+      responses:
+        "201":
+          description: Atividade criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Atividade"
+  /atividades/{id}:
+    get:
+      tags:
+        - Atividade
+      description: Obtém uma atividade pelo ID
+      operationId: getAtividadeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Detalhes da atividade
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Atividade"
+    put:
+      tags:
+        - Atividade
+      description: Atualiza uma atividade pelo ID
+      operationId: updateAtividade
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AtividadeInput"
+      responses:
+        "200":
+          description: Atividade atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Atividade"
+    delete:
+      tags:
+        - Atividade
+      description: Exclui uma atividade pelo ID
+      operationId: deleteAtividade
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Atividade excluída com sucesso
+
 components:
   schemas:
-    Aluno:
+    Usuario:
       type: object
       properties:
         id:
@@ -432,37 +555,65 @@ components:
           type: string
         email:
           type: string
-        registros:
-          type: array
-          items:
-            $ref: '#/components/schemas/RegistroHora'
-    AlunoInput:
+        role:
+          type: string
+          enum:
+            - Professor
+            - Aluno
+        professor:
+          $ref: "#/components/schemas/Professor"
+        aluno:
+          $ref: "#/components/schemas/Aluno"
+    UsuarioInput:
       type: object
       properties:
         nome:
           type: string
         email:
           type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum:
+            - Professor
+            - Aluno
     Professor:
       type: object
       properties:
         id:
           type: integer
-        nome:
-          type: string
-        email:
-          type: string
+        usuarioId:
+          type: integer
         projetos:
           type: array
           items:
-            $ref: '#/components/schemas/Projeto'
+            $ref: "#/components/schemas/Projeto"
     ProfessorInput:
       type: object
       properties:
-        nome:
-          type: string
-        email:
-          type: string
+        usuarioId:
+          type: integer
+    Aluno:
+      type: object
+      properties:
+        id:
+          type: integer
+        usuarioId:
+          type: integer
+        registros:
+          type: array
+          items:
+            $ref: "#/components/schemas/RegistroHora"
+        atividades:
+          type: array
+          items:
+            $ref: "#/components/schemas/AtividadeAluno"
+    AlunoInput:
+      type: object
+      properties:
+        usuarioId:
+          type: integer
     Projeto:
       type: object
       properties:
@@ -474,10 +625,14 @@ components:
           type: string
         professorId:
           type: integer
-        alunos:
+        registros:
           type: array
           items:
-            $ref: '#/components/schemas/Aluno'
+            $ref: "#/components/schemas/RegistroHora"
+        atividades:
+          type: array
+          items:
+            $ref: "#/components/schemas/Atividade"
     ProjetoInput:
       type: object
       properties:
@@ -513,12 +668,71 @@ components:
         dataRegistro:
           type: string
           format: date-time
+    Atividade:
+      type: object
+      properties:
+        id:
+          type: integer
+        titulo:
+          type: string
+        descricao:
+          type: string
+        horasNecessarias:
+          type: integer
+        projetoId:
+          type: integer
+        alunos:
+          type: array
+          items:
+            $ref: "#/components/schemas/AtividadeAluno"
+    AtividadeInput:
+      type: object
+      properties:
+        titulo:
+          type: string
+        descricao:
+          type: string
+        horasNecessarias:
+          type: integer
+        projetoId:
+          type: integer
+    AtividadeAluno:
+      type: object
+      properties:
+        id:
+          type: integer
+        atividadeId:
+          type: integer
+        alunoId:
+          type: integer
+        status:
+          type: string
+        dataConclusao:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AtividadeAlunoInput:
+      type: object
+      properties:
+        atividadeId:
+          type: integer
+        alunoId:
+          type: integer
+        status:
+          type: string
+        dataConclusao:
+          type: string
+          format: date-time
     ApiResponse:
       type: object
       properties:
         code:
           type: integer
-          format: int32
         message:
           type: string
           example: everything is ok
