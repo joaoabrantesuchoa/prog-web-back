@@ -5,8 +5,17 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "server/dist"
+    "outDir": "server/dist",
+    "moduleResolution": "node",
+    "resolveJsonModule": true
   },
-  "include": ["./**/*.ts"],
-  "exclude": ["server/dist", "node_modules", "**/*.spec.ts"]
+  "include": [
+    "./**/*.ts",
+    "src/tests/projectRoutesTests.spec"
+  ],
+  "exclude": [
+    "server/dist",
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }
