@@ -18,6 +18,12 @@ enum Role {
   Aluno
 }
 
+enum StatusAtividade {
+  PENDENTE
+  CONCLUIDA
+}
+
+
 model Usuario {
   id        Int        @id @default(autoincrement())
   nome      String     @db.VarChar(100)
@@ -79,4 +85,5 @@ model AtividadeAluno {
   atividadeId Int
   aluno       Aluno     @relation(fields: [alunoId], references: [id])
   alunoId     Int
+  status      StatusAtividade @default(PENDENTE)
 }

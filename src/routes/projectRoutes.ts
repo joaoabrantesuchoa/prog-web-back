@@ -5,6 +5,8 @@ import {
   getProjectFromUserId,
   createProject,
   deleteProject,
+  addStudentToProject,
+  removeStudentFromProject,
 } from "../controllers/projectController";
 
 const router = Router();
@@ -15,6 +17,14 @@ router.get("/:id", authMiddleware, getProjectFromUserId);
 
 router.post("/", authMiddleware, createProject);
 
-router.post("/", authMiddleware, deleteProject);
+router.delete("/", authMiddleware, deleteProject);
+
+router.post("/:id/students/:studentId", authMiddleware, addStudentToProject);
+
+router.delete(
+  "/:id/students/:studentId",
+  authMiddleware,
+  removeStudentFromProject,
+);
 
 export default router;
