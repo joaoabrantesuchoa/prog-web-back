@@ -13,13 +13,13 @@ router.post("/project/:id", authMiddleware, createActivity);
 router.put(
   "aluno/:alunoId/activities/:id/conclude",
   authMiddleware,
-  concludeActivity,
+  concludeActivity
 );
 
 router.get(
   "aluno/:alunoId/activities/status/:status",
   authMiddleware,
-  getActivitiesByStatus,
+  getActivitiesByStatus
 );
 
 export default router;
