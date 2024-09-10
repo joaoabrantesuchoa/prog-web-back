@@ -7,17 +7,18 @@ import {
   deleteTeacher,
 } from "../controllers/teacherController";
 import { authMiddleware } from "../middleware/token";
+import { Role } from "@prisma/client";
 
 const router = Router();
 
-router.get("/", authMiddleware, getAllTeachers);
+router.get("/", authMiddleware([Role.Professor]), getAllTeachers);
 
-router.get("/:id", authMiddleware, getTeacherById);
+router.get("/:id", authMiddleware([Role.Professor]), getTeacherById);
 
-router.post("/", authMiddleware, createTeacher);
+router.post("/", authMiddleware([Role.Professor]), createTeacher);
 
-router.put("/:id", authMiddleware, updateTeacher);
+router.put("/:id", authMiddleware([Role.Professor]), updateTeacher);
 
-router.delete("/:id", authMiddleware, deleteTeacher);
+router.delete("/:id", authMiddleware([Role.Professor]), deleteTeacher);
 
 export default router;
