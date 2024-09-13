@@ -73,7 +73,7 @@ export const concludeActivity = async (req: Request, res: Response) => {
 
     const updatedActivity = await Activity.concludeActivity(
       alunoId,
-      atividadeId
+      atividadeId,
     );
 
     if (updatedActivity.count === 0) {
@@ -112,7 +112,7 @@ export const getActivitiesByStatus = async (req: Request, res: Response) => {
     const activities = await Activity.getActivitiesByStatus(
       alunoId,
       projetoId,
-      status
+      status,
     );
 
     if (activities.length === 0) {

@@ -14,7 +14,8 @@ const updateTeacherSchema = z.object({
   email: z.string().email({ message: "E-mail inválido" }).optional(),
   password: z
     .string()
-    .min(6, { message: "Senha deve ter pelo menos 6 caracteres" }).optional(),
+    .min(6, { message: "Senha deve ter pelo menos 6 caracteres" })
+    .optional(),
 });
 
 export const getAllTeachers = async (_req: Request, res: Response) => {
@@ -62,7 +63,9 @@ export const createTeacher = async (req: Request, res: Response) => {
     }
 
     if (user.role !== "Professor") {
-      return res.status(400).json({ error: "O usuário não tem o papel de Professor" });
+      return res
+        .status(400)
+        .json({ error: "O usuário não tem o papel de Professor" });
     }
 
     const teacher = await Teacher.createTeacher({ usuarioId });

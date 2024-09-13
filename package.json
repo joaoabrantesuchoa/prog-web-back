@@ -7,7 +7,7 @@
     "build": "tsc --build --clean",
     "start": "NODE_ENV=production 'ts-node' src/server.ts",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
-    "test": "vitest",
+    "test": "vitest --no-file-parallelism",
     "deps:prepare": "npm install && npm run build && docker-compose up -d",
     "prisma:setup": "npx prisma migrate dev && npx prisma generate",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
@@ -52,6 +52,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.2.0",
-    "vitest": "^2.0.5"
+    "vitest": "^2.1.0",
+    "vitest-mock-extended": "^2.0.2"
   }
 }

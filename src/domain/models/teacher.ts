@@ -22,15 +22,20 @@ export class Teacher {
   }
 
   static async updateTeacher(
-    updateData: { id: number } & Partial<{ nome: string; email: string; password: string }> & Partial<Omit<Teacher, "id">>,
+    updateData: { id: number } & Partial<{
+      nome: string;
+      email: string;
+      password: string;
+    }> &
+      Partial<Omit<Teacher, "id">>,
   ): Promise<Professor | null> {
     const { id, nome, email, password, ...restData } = updateData;
-  
+
     const updatedProfessor = await this.prisma.professor.update({
       where: { id },
       data: restData,
     });
-  
+
     if (nome || email || password) {
       await this.prisma.usuario.update({
         where: { id: updatedProfessor.usuarioId },
@@ -41,10 +46,9 @@ export class Teacher {
         },
       });
     }
-  
+
     return updatedProfessor;
   }
-  
 
   static async deleteTeacher(id: number): Promise<Teacher> {
     const response = await this.prisma.professor.delete({

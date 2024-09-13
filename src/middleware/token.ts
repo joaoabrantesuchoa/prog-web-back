@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import { User } from "../domain/models/user";
-import { Role } from '@prisma/client';
-
+import { Role } from "@prisma/client";
 
 const SECRET_KEY: Secret = process.env.JWT || "secret";
 
@@ -25,7 +24,9 @@ export const authMiddleware = (roles: Role[]) => {
         return res.status(401).send("Unauthorized: No token provided");
       }
 
-      const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload & { role: Role };
+      const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload & {
+        role: Role;
+      };
 
       if (!decoded.id) {
         return res.status(401).send("Unauthorized: Invalid token");
@@ -40,7 +41,9 @@ export const authMiddleware = (roles: Role[]) => {
       req.user = user;
 
       if (!roles.includes(user.role)) {
-        return res.status(403).send("Forbidden: You do not have the necessary permissions");
+        return res
+          .status(403)
+          .send("Forbidden: You do not have the necessary permissions");
       }
 
       next();

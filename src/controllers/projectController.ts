@@ -104,7 +104,7 @@ export const addStudentToProject = async (req: Request, res: Response) => {
     const { projectId, studentId } = validation.data;
     const updatedProject = await Project.addStudentToProject(
       Number(projectId),
-      Number(studentId)
+      Number(studentId),
     );
 
     res.status(200).json(updatedProject);
@@ -127,7 +127,7 @@ export const removeStudentFromProject = async (req: Request, res: Response) => {
     const { projectId, studentId } = validation.data;
     const updatedProject = await Project.removeStudentFromProject(
       Number(projectId),
-      Number(studentId)
+      Number(studentId),
     );
 
     res.status(200).json(updatedProject);

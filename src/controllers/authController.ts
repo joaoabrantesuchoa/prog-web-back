@@ -80,7 +80,7 @@ export const login = async (req: Request, res: Response) => {
 
     const isPasswordValid = await bcrypt.compare(
       req.body.password,
-      user.password
+      user.password,
     );
 
     if (!isPasswordValid) {

@@ -103,7 +103,7 @@ export const updateStudent = async (req: Request, res: Response) => {
 
     if (updated) {
       const updatedStudent = await Student.getStudentById(
-        Number(req.params.id)
+        Number(req.params.id),
       );
       res.json(updatedStudent);
     } else {

@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "outDir": "server/dist",
     "moduleResolution": "node",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   },
   "include": [
     "./**/*.ts",
