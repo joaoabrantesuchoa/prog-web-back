@@ -114,7 +114,7 @@ describe("Authentication and Authorization Routes", () => {
           nome: "John Doe",
           email: "john@example.com",
           password: hashedPassword,
-          role: "Aluno", // Papel de aluno para testar acesso negado
+          role: "Aluno",
         },
       });
 
@@ -125,7 +125,7 @@ describe("Authentication and Authorization Routes", () => {
 
     it("should return 403 if user does not have necessary permissions", async () => {
       const response = await request(app)
-        .post("/professores") // Rota que requer permissão de "Professor"
+        .post("/professores")
         .set("Authorization", `Bearer ${token}`)
         .send({
           nome: "Jane Doe",

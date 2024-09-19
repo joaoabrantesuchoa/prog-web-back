@@ -22,13 +22,32 @@ export class Student {
   }
 
   static async updateStudent(
-    updateData: { id: number } & Partial<Omit<Aluno, "id">>,
+    updateData: { id: number } & Partial<{
+      nome: string;
+      email: string;
+      password: string;
+    }> &
+      Partial<Omit<Student, "id">>,
   ): Promise<Aluno | null> {
-    const { id, ...data } = updateData;
-    return this.prisma.aluno.update({
+    const { id, nome, email, password, ...restData } = updateData;
+
+    const updatedAluno = await this.prisma.aluno.update({
       where: { id },
-      data,
+      data: restData,
     });
+
+    if (nome || email || password) {
+      await this.prisma.usuario.update({
+        where: { id: updatedAluno.usuarioId },
+        data: {
+          ...(nome && { nome }),
+          ...(email && { email }),
+          ...(password && { password }),
+        },
+      });
+    }
+
+    return updatedAluno;
   }
 
   static async deleteStudent(id: number): Promise<Student> {

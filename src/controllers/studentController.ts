@@ -9,10 +9,16 @@ const studentSchema = z.object({
     .string()
     .email({ message: "Formato de email inválido" })
     .min(1, { message: "O email é obrigatório" }),
+  usuarioId: z.number(),
+});
+
+const updateStudentSchema = z.object({
+  nome: z.string().min(1, { message: "Nome é obrigatório" }).optional(),
+  email: z.string().email({ message: "E-mail inválido" }).optional(),
   password: z
     .string()
-    .min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
-  role: z.enum(["Aluno"]).default("Aluno"),
+    .min(6, { message: "Senha deve ter pelo menos 6 caracteres" })
+    .optional(),
 });
 
 const studentIdSchema = z.object({
@@ -59,22 +65,21 @@ export const createStudent = async (req: Request, res: Response) => {
         .json({ error: validation.error.errors[0].message });
     }
 
-    const user = await User.createUser({
-      nome: validation.data.nome,
-      email: validation.data.email,
-      password: validation.data.password,
-      role: validation.data.role,
-    });
+    const { usuarioId } = validation.data;
 
-    if (user) {
-      const student = await Student.createStudent({
-        usuarioId: user.id,
-      });
+    const user = await User.getUserById(usuarioId);
 
-      res.status(201).json(student);
-    } else {
-      res.status(500).json({ error: "Erro ao criar usuário" });
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
     }
+
+    if (user.role !== "Aluno") {
+      return res
+        .status(400)
+        .json({ error: "O usuário não tem o papel de Aluno" });
+    }
+    const student = await Student.createStudent({ usuarioId });
+    res.status(201).json(student);
   } catch (error) {
     res.status(500).json({ error: `Erro ao criar estudante: ${error}` });
   }
@@ -82,37 +87,30 @@ export const createStudent = async (req: Request, res: Response) => {
 
 export const updateStudent = async (req: Request, res: Response) => {
   try {
-    const validation = studentIdSchema.safeParse(req.params);
+    const validation = updateStudentSchema.safeParse(req.body);
+    
     if (!validation.success) {
-      return res
-        .status(400)
-        .json({ error: validation.error.errors[0].message });
-    }
-
-    const updateValidation = studentSchema.partial().safeParse(req.body);
-    if (!updateValidation.success) {
-      return res
-        .status(400)
-        .json({ error: updateValidation.error.errors[0].message });
+      return res.status(400).json({ error: validation.error.errors });
     }
 
     const updated = await Student.updateStudent({
       id: Number(req.params.id),
-      ...updateValidation.data,
+      ...validation.data,
     });
 
     if (updated) {
       const updatedStudent = await Student.getStudentById(
-        Number(req.params.id),
+        Number(req.params.id)
       );
       res.json(updatedStudent);
     } else {
-      res.status(404).json({ error: "Estudante não encontrado" });
+      res.status(404).json({ error: "Aluno não encontrado" });
     }
   } catch (error) {
-    res.status(500).json({ error: `Erro ao atualizar estudante: ${error}` });
+    res.status(500).json({ error: `Falha ao atualizar o aluno: ${error}` });
   }
 };
+
 
 export const deleteStudent = async (req: Request, res: Response) => {
   try {

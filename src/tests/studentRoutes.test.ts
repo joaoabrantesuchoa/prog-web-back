@@ -4,34 +4,32 @@ import app from "../server";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT || "secret";
 let token: string;
 
-describe("Teacher Routes", () => {
+describe("Student Routes", () => {
   beforeAll(async () => {
-    await prisma.professor.deleteMany({});
+    await prisma.aluno.deleteMany({});
     await prisma.usuario.deleteMany({});
   });
 
   afterEach(async () => {
-    await prisma.professor.deleteMany({});
+    await prisma.aluno.deleteMany({});
     await prisma.usuario.deleteMany({});
   });
 
   afterAll(async () => {
-    await prisma.professor.deleteMany({});
-    await prisma.usuario.deleteMany({});
     await prisma.$disconnect();
   });
 
-  it("should create a teacher", async () => {
+  it("should create a student", async () => {
     const user = await prisma.usuario.create({
       data: {
         nome: "John Doe",
-        email: "john@example.com",
+        email: "john.student@example.com",
         password: "password123",
-        role: "Professor",
+        role: "Aluno",
       },
     });
 
@@ -39,29 +37,29 @@ describe("Teacher Routes", () => {
       expiresIn: "1h",
     });
 
-    const newTeacher = {
+    const newStudent = {
       nome: "John Doe",
-      email: "john@example.com",
+      email: "john.student@example.com",
       usuarioId: user.id,
     };
 
     const response = await request(app)
-      .post("/professores")
+      .post("/alunos")
       .set("Authorization", `Bearer ${token}`)
-      .send(newTeacher);
+      .send(newStudent);
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("id");
     expect(response.body.usuarioId).toBe(user.id);
   });
 
-  it("should get all teachers", async () => {
+  it("should get all students", async () => {
     const user = await prisma.usuario.create({
       data: {
         nome: "Jane Doe",
-        email: "jane@example.com",
+        email: "jane.student@example.com",
         password: "password123",
-        role: "Professor",
+        role: "Aluno",
       },
     });
 
@@ -69,27 +67,27 @@ describe("Teacher Routes", () => {
       expiresIn: "1h",
     });
 
-    await prisma.professor.create({
+    await prisma.aluno.create({
       data: {
         usuarioId: user.id,
       },
     });
 
     const response = await request(app)
-      .get("/professores")
+      .get("/alunos")
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(response.body.length).toBeGreaterThan(0);
   });
 
-  it("should get a teacher by ID", async () => {
+  it("should get a student by ID", async () => {
     const user = await prisma.usuario.create({
       data: {
         nome: "Jane Smith",
-        email: "jane.smith@example.com",
+        email: "jane.smith@student.com",
         password: "password123",
-        role: "Professor",
+        role: "Aluno",
       },
     });
 
@@ -97,28 +95,28 @@ describe("Teacher Routes", () => {
       expiresIn: "1h",
     });
 
-    const teacher = await prisma.professor.create({
+    const student = await prisma.aluno.create({
       data: {
         usuarioId: user.id,
       },
     });
 
     const response = await request(app)
-      .get(`/professores/${teacher.id}`)
+      .get(`/alunos/${student.id}`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
-    expect(response.body.id).toBe(teacher.id);
+    expect(response.body.id).toBe(student.id);
     expect(response.body.usuarioId).toBe(user.id);
   });
 
-  it("should update a teacher", async () => {
+  it("should update a student", async () => {
     const user = await prisma.usuario.create({
       data: {
         nome: "Michael Doe",
-        email: "michael@example.com",
+        email: "michael@student.com",
         password: "password123",
-        role: "Professor",
+        role: "Aluno",
       },
     });
 
@@ -126,28 +124,28 @@ describe("Teacher Routes", () => {
       expiresIn: "1h",
     });
 
-    const newTeacher = {
-      nome: "John Doe",
-      email: "john@example.com",
+    const newStudent = {
+      nome: "Michael Doe",
+      email: "michael@student.com",
       usuarioId: user.id,
     };
 
     let response = await request(app)
-      .post("/professores")
+      .post("/alunos")
       .set("Authorization", `Bearer ${token}`)
-      .send(newTeacher);
+      .send(newStudent);
 
-    const teacherId = response.body.id;
+    const studentId = response.body.id;
 
-    const updatedTeacherData = {
+    const updatedStudentData = {
       nome: "Michael Smith",
-      email: "michael.smith@example.com",
+      email: "michael.smith@student.com",
     };
 
     response = await request(app)
-      .put(`/professores/${teacherId}`)
+      .put(`/alunos/${studentId}`)
       .set("Authorization", `Bearer ${token}`)
-      .send(updatedTeacherData);
+      .send(updatedStudentData);
 
     expect(response.status).toBe(200);
     expect(response.body.usuarioId).toBe(user.id);
@@ -157,16 +155,16 @@ describe("Teacher Routes", () => {
     });
 
     expect(updatedUser?.nome).toBe("Michael Smith");
-    expect(updatedUser?.email).toBe("michael.smith@example.com");
+    expect(updatedUser?.email).toBe("michael.smith@student.com");
   });
 
-  it("should delete a teacher", async () => {
+  it("should delete a student", async () => {
     const user = await prisma.usuario.create({
       data: {
         nome: "Lisa Doe",
-        email: "lisa@example.com",
+        email: "lisa@student.com",
         password: "password123",
-        role: "Professor",
+        role: "Aluno",
       },
     });
 
@@ -174,123 +172,25 @@ describe("Teacher Routes", () => {
       expiresIn: "1h",
     });
 
-    const teacher = await prisma.professor.create({
+    const student = await prisma.aluno.create({
       data: {
         usuarioId: user.id,
       },
     });
 
     const response = await request(app)
-      .delete(`/professores/${teacher.id}`)
+      .delete(`/alunos/${student.id}`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(204);
   });
 
-  it("should return 404 for non-existing teacher on GET by ID", async () => {
+  it("should return 404 for non-existing student on GET by ID", async () => {
     const user = await prisma.usuario.create({
       data: {
         nome: "John Doe",
-        email: "john@example.com",
+        email: "john@student.com",
         password: "password123",
-        role: "Professor",
-      },
-    });
-
-    token = jwt.sign({ id: user.id, role: user.role }, SECRET_KEY, {
-      expiresIn: "1h",
-    });
-
-    const response = await request(app)
-      .get("/professores/999999")
-      .set("Authorization", `Bearer ${token}`);
-
-    expect(response.status).toBe(404);
-    expect(response.body.error).toBe("Professor não encontrado");
-  });
-
-  it("should return 400 for invalid data on POST create teacher", async () => {
-    const user = await prisma.usuario.create({
-      data: {
-        nome: "John Doe",
-        email: "john@example.com",
-        password: "password123",
-        role: "Professor",
-      },
-    });
-
-    token = jwt.sign({ id: user.id, role: user.role }, SECRET_KEY, {
-      expiresIn: "1h",
-    });
-
-    const newTeacher = {
-      email: "john@example.com",
-      usuarioId: user.id,
-    };
-
-    const response = await request(app)
-      .post("/professores")
-      .set("Authorization", `Bearer ${token}`)
-      .send(newTeacher);
-
-    expect(response.status).toBe(400);
-    expect(response.body.error[0].code).toBe("invalid_type");
-  });
-
-  it("should return 400 for invalid data on PUT update teacher", async () => {
-    const user = await prisma.usuario.create({
-      data: {
-        nome: "John Doe",
-        email: "john@example.com",
-        password: "password123",
-        role: "Professor",
-      },
-    });
-
-    token = jwt.sign({ id: user.id, role: user.role }, SECRET_KEY, {
-      expiresIn: "1h",
-    });
-
-    const newTeacher = {
-      nome: "John Doe",
-      email: "john@example.com",
-      usuarioId: user.id,
-    };
-
-    let response = await request(app)
-      .post("/professores")
-      .set("Authorization", `Bearer ${token}`)
-      .send(newTeacher);
-
-    const teacherId = response.body.id;
-
-    const updatedTeacherData = {
-      password: "aaa",
-    };
-
-    response = await request(app)
-      .put(`/professores/${teacherId}`)
-      .set("Authorization", `Bearer ${token}`)
-      .send(updatedTeacherData);
-
-    expect(response.status).toBe(400);
-    expect(response.body.error[0].code).toBe("too_small");
-  });
-
-  it("should return 401 for unauthorized access", async () => {
-    const response = await request(app)
-      .get("/professores")
-      .set("Authorization", "Bearer invalidtoken");
-
-    expect(response.status).toBe(401);
-  });
-
-  it("should return 403 for forbidden access", async () => {
-    const user = await prisma.usuario.create({
-      data: {
-        nome: "Admin User",
-        email: "admin@example.com",
-        password: "adminpassword",
         role: "Aluno",
       },
     });
@@ -300,26 +200,97 @@ describe("Teacher Routes", () => {
     });
 
     const response = await request(app)
-      .post("/professores")
-      .set("Authorization", `Bearer ${token}`)
-      .send({
-        nome: "John Doe",
-        email: "john@example.com",
-        usuarioId: user.id,
-      });
+      .get("/alunos/999999")
+      .set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(403);
-    expect(response.text).toBe(
-      "Forbidden: You do not have the necessary permissions",
-    );
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe("Estudante não encontrado");
   });
 
-  it("should return 204 for successful DELETE with no content", async () => {
+  it("should return 400 for invalid data on POST create student", async () => {
     const user = await prisma.usuario.create({
       data: {
-        nome: "Lisa Doe",
-        email: "lisa@example.com",
+        nome: "John Doe",
+        email: "john@student.com",
         password: "password123",
+        role: "Aluno",
+      },
+    });
+
+    token = jwt.sign({ id: user.id, role: user.role }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    const newStudent = {
+      email: "john@student.com",
+      usuarioId: user.id,
+    };
+
+    const response = await request(app)
+      .post("/alunos")
+      .set("Authorization", `Bearer ${token}`)
+      .send(newStudent);
+
+    console.log(response.body)
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe("Required");
+  });
+
+  it("should return 400 for invalid data on PUT update student", async () => {
+    const user = await prisma.usuario.create({
+      data: {
+        nome: "John Doe",
+        email: "john@student.com",
+        password: "password123",
+        role: "Aluno",
+      },
+    });
+
+    token = jwt.sign({ id: user.id, role: user.role }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    const newStudent = {
+      nome: "John Doe",
+      email: "john@student.com",
+      usuarioId: user.id,
+    };
+
+    let response = await request(app)
+      .post("/alunos")
+      .set("Authorization", `Bearer ${token}`)
+      .send(newStudent);
+
+    const studentId = response.body.id;
+
+    const updatedStudentData = {
+      password: "abc",
+    };
+
+    response = await request(app)
+      .put(`/alunos/${studentId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send(updatedStudentData);
+
+    expect(response.status).toBe(400);
+    expect(response.body.error[0].code).toBe("too_small");
+  });
+
+  it("should return 401 for unauthorized access", async () => {
+    const response = await request(app)
+      .get("/alunos")
+      .set("Authorization", "Bearer invalidtoken");
+
+    expect(response.status).toBe(401);
+  });
+
+  it("should return 403 for forbidden access", async () => {
+    const user = await prisma.usuario.create({
+      data: {
+        nome: "Admin User",
+        email: "admin@student.com",
+        password: "adminpassword",
         role: "Professor",
       },
     });
@@ -328,16 +299,18 @@ describe("Teacher Routes", () => {
       expiresIn: "1h",
     });
 
-    const teacher = await prisma.professor.create({
-      data: {
-        usuarioId: user.id,
-      },
-    });
-
     const response = await request(app)
-      .delete(`/professores/${teacher.id}`)
-      .set("Authorization", `Bearer ${token}`);
+      .post("/alunos")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        nome: "John Doe",
+        email: "john@student.com",
+        usuarioId: user.id,
+      });
 
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(403);
+    expect(response.text).toBe(
+      "Forbidden: You do not have the necessary permissions"
+    );
   });
 });

@@ -5,7 +5,10 @@ import { User } from "../domain/models/user";
 
 const teacherSchema = z.object({
   nome: z.string().min(1, { message: "Nome é obrigatório" }),
-  email: z.string().email({ message: "E-mail inválido" }),
+  email: z
+    .string()
+    .email({ message: "Formato de email inválido" })
+    .min(1, { message: "O email é obrigatório" }),
   usuarioId: z.number(),
 });
 
@@ -79,6 +82,7 @@ export const createTeacher = async (req: Request, res: Response) => {
 export const updateTeacher = async (req: Request, res: Response) => {
   try {
     const validation = updateTeacherSchema.safeParse(req.body);
+    
     if (!validation.success) {
       return res.status(400).json({ error: validation.error.errors });
     }
@@ -90,7 +94,7 @@ export const updateTeacher = async (req: Request, res: Response) => {
 
     if (updated) {
       const updatedTeacher = await Teacher.getTeacherById(
-        Number(req.params.id),
+        Number(req.params.id)
       );
       res.json(updatedTeacher);
     } else {
