@@ -8,18 +8,19 @@ import {
   addStudentToProject,
   removeStudentFromProject,
 } from "../controllers/projectController";
+import { Role } from "@prisma/client";
 
 const router = Router();
 
-router.get("/", authMiddleware, getAllProjects);
+router.get("/", authMiddleware([Role.Professor]), getAllProjects);
 
-router.get("/:id", authMiddleware, getProjectFromUserId);
+router.get("/:id", authMiddleware([Role.Professor]), getProjectFromUserId);
 
-router.post("/", authMiddleware, createProject);
+router.post("/", authMiddleware([Role.Professor]), createProject);
 
-router.delete("/", authMiddleware, deleteProject);
+router.delete("/:id", authMiddleware([Role.Professor]), deleteProject);
 
-router.post("/:id/students/:studentId", authMiddleware, addStudentToProject);
+router.post("/:id/students/:studentId", authMiddleware([Role.Professor]), addStudentToProject);
 
 router.delete(
   "/:id/students/:studentId",

@@ -231,8 +231,6 @@ describe("Student Routes", () => {
       .set("Authorization", `Bearer ${token}`)
       .send(newStudent);
 
-    console.log(response.body)
-
     expect(response.status).toBe(400);
     expect(response.body.error).toBe("Required");
   });

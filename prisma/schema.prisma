@@ -37,14 +37,14 @@ model Usuario {
 model Professor {
   id        Int       @id @default(autoincrement())
   projetos  Projeto[]
-  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   usuarioId Int       @unique
 }
 
 model Aluno {
   id             Int              @id @default(autoincrement())
   registros      RegistroHora[]
-  usuario        Usuario          @relation(fields: [usuarioId], references: [id])
+  usuario        Usuario          @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   usuarioId      Int              @unique
   AtividadeAluno AtividadeAluno[]
 }
@@ -63,7 +63,7 @@ model RegistroHora {
   id               Int      @id @default(autoincrement())
   aluno            Aluno    @relation(fields: [alunoId], references: [id])
   alunoId          Int
-  projeto          Projeto  @relation(fields: [projetoId], references: [id])
+  projeto          Projeto  @relation(fields: [projetoId], references: [id], onDelete: Cascade)
   projetoId        Int
   horasTrabalhadas Int
   dataRegistro     DateTime @default(now())

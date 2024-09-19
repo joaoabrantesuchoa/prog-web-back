@@ -68,18 +68,12 @@ export const createProject = async (req: Request, res: Response) => {
 
 export const deleteProject = async (req: Request, res: Response) => {
   try {
-    const validation = z
-      .object({
-        id: z.string().regex(/^\d+$/, { message: "ID do projeto inválido" }),
-      })
-      .safeParse(req.params);
-    if (!validation.success) {
-      return res
-        .status(400)
-        .json({ error: validation.error.errors[0].message });
+    const projectId = Number(req.params.id);
+
+    if (isNaN(projectId)) {
+      return res.status(400).json({ error: "ID do projeto inválido" });
     }
 
-    const projectId = Number(req.params.id);
     const deleted = await Project.deleteProject(projectId);
 
     if (deleted) {
@@ -104,7 +98,7 @@ export const addStudentToProject = async (req: Request, res: Response) => {
     const { projectId, studentId } = validation.data;
     const updatedProject = await Project.addStudentToProject(
       Number(projectId),
-      Number(studentId),
+      Number(studentId)
     );
 
     res.status(200).json(updatedProject);
@@ -127,7 +121,7 @@ export const removeStudentFromProject = async (req: Request, res: Response) => {
     const { projectId, studentId } = validation.data;
     const updatedProject = await Project.removeStudentFromProject(
       Number(projectId),
-      Number(studentId),
+      Number(studentId)
     );
 
     res.status(200).json(updatedProject);
