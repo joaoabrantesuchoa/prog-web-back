@@ -68,7 +68,7 @@ describe("Project Routes", () => {
         role: "Professor",
       },
     });
-  
+
     const professor = await prisma.professor.create({
       data: {
         usuarioId: professorUser.id,
@@ -89,7 +89,7 @@ describe("Project Routes", () => {
         usuarioId: alunoUser.id,
       },
     });
-  
+
     const project = await prisma.projeto.create({
       data: {
         titulo: "New Project",
@@ -97,15 +97,19 @@ describe("Project Routes", () => {
         professorId: professor.id,
       },
     });
-  
-    token = jwt.sign({ id: professorUser.id, role: professorUser.role }, SECRET_KEY, {
-      expiresIn: "1h",
-    });
-  
+
+    token = jwt.sign(
+      { id: professorUser.id, role: professorUser.role },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
     const response = await request(app)
       .post(`/projetos/${project.id}/students/${student.id}`)
       .set("Authorization", `Bearer ${token}`);
-  
+
     expect(response.status).toBe(200);
     expect(response.body.registros).toEqual(
       expect.arrayContaining([
@@ -127,13 +131,13 @@ describe("Project Routes", () => {
         role: "Professor",
       },
     });
-  
+
     const professor = await prisma.professor.create({
       data: {
         usuarioId: professorUser.id,
       },
     });
-  
+
     const alunoUser = await prisma.usuario.create({
       data: {
         nome: "Aluno João",
@@ -142,13 +146,13 @@ describe("Project Routes", () => {
         role: "Aluno",
       },
     });
-  
+
     const student = await prisma.aluno.create({
       data: {
         usuarioId: alunoUser.id,
       },
     });
-  
+
     const project = await prisma.projeto.create({
       data: {
         titulo: "New Project",
@@ -156,15 +160,19 @@ describe("Project Routes", () => {
         professorId: professor.id,
       },
     });
-  
-    token = jwt.sign({ id: professorUser.id, role: professorUser.role }, SECRET_KEY, {
-      expiresIn: "1h",
-    });
-  
+
+    token = jwt.sign(
+      { id: professorUser.id, role: professorUser.role },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
     let response = await request(app)
       .post(`/projetos/${project.id}/students/${student.id}`)
       .set("Authorization", `Bearer ${token}`);
-  
+
     expect(response.status).toBe(200);
     expect(response.body.registros).toEqual(
       expect.arrayContaining([
@@ -175,11 +183,11 @@ describe("Project Routes", () => {
         }),
       ])
     );
-  
+
     response = await request(app)
       .delete(`/projetos/${project.id}/students/${student.id}`)
       .set("Authorization", `Bearer ${token}`);
-  
+
     expect(response.status).toBe(200);
     expect(response.body.registros).not.toEqual(
       expect.arrayContaining([
@@ -190,7 +198,6 @@ describe("Project Routes", () => {
       ])
     );
   });
-  
 
   it("should delete a project", async () => {
     const user = await prisma.usuario.create({
@@ -313,5 +320,267 @@ describe("Project Routes", () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("id", project.id);
     expect(response.body).toHaveProperty("titulo", "Single Project");
+  });
+
+  it("should return 404 if student ID does not exist when adding to project", async () => {
+    const professorUser = await prisma.usuario.create({
+      data: {
+        nome: "Professor John",
+        email: "professor@example.com",
+        password: "password123",
+        role: "Professor",
+      },
+    });
+
+    const professor = await prisma.professor.create({
+      data: {
+        usuarioId: professorUser.id,
+      },
+    });
+
+    const project = await prisma.projeto.create({
+      data: {
+        titulo: "New Project",
+        descricao: "New project description",
+        professorId: professor.id,
+      },
+    });
+
+    token = jwt.sign(
+      { id: professorUser.id, role: professorUser.role },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    // Tenta adicionar um estudante com ID inexistente
+    const nonExistentStudentId = 999;
+
+    const response = await request(app)
+      .post(`/projetos/${project.id}/students/${nonExistentStudentId}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("error", "Estudante não encontrado");
+  });
+
+  it("should return 404 if project ID does not exist when adding a student", async () => {
+    const professorUser = await prisma.usuario.create({
+      data: {
+        nome: "Professor John",
+        email: "professor@example.com",
+        password: "password123",
+        role: "Professor",
+      },
+    });
+
+    await prisma.professor.create({
+      data: {
+        usuarioId: professorUser.id,
+      },
+    });
+
+    const alunoUser = await prisma.usuario.create({
+      data: {
+        nome: "Aluno João",
+        email: "joao@example.com",
+        password: "password",
+        role: "Aluno",
+      },
+    });
+
+    const student = await prisma.aluno.create({
+      data: {
+        usuarioId: alunoUser.id,
+      },
+    });
+
+    token = jwt.sign(
+      { id: professorUser.id, role: professorUser.role },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    const nonExistentProjectId = 999;
+
+    const response = await request(app)
+      .post(`/projetos/${nonExistentProjectId}/students/${student.id}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("error", "Projeto não encontrado");
+  });
+
+  it("should return 400 if student ID is invalid format when adding to project", async () => {
+    const professorUser = await prisma.usuario.create({
+      data: {
+        nome: "Professor John",
+        email: "professor@example.com",
+        password: "password123",
+        role: "Professor",
+      },
+    });
+
+    const professor = await prisma.professor.create({
+      data: {
+        usuarioId: professorUser.id,
+      },
+    });
+
+    const project = await prisma.projeto.create({
+      data: {
+        titulo: "New Project",
+        descricao: "New project description",
+        professorId: professor.id,
+      },
+    });
+
+    token = jwt.sign(
+      { id: professorUser.id, role: professorUser.role },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    const invalidStudentId = "invalidId";
+
+    const response = await request(app)
+      .post(`/projetos/${project.id}/students/${invalidStudentId}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(500);
+  });
+
+  it("should return 404 if student ID does not exist when removing from project", async () => {
+    const professorUser = await prisma.usuario.create({
+      data: {
+        nome: "Professor John",
+        email: "professor@example.com",
+        password: "password123",
+        role: "Professor",
+      },
+    });
+
+    const professor = await prisma.professor.create({
+      data: {
+        usuarioId: professorUser.id,
+      },
+    });
+
+    const project = await prisma.projeto.create({
+      data: {
+        titulo: "New Project",
+        descricao: "New project description",
+        professorId: professor.id,
+      },
+    });
+
+    token = jwt.sign(
+      { id: professorUser.id, role: professorUser.role },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    // Tenta remover um estudante com ID inexistente
+    const nonExistentStudentId = 999;
+
+    const response = await request(app)
+      .delete(`/projetos/${project.id}/students/${nonExistentStudentId}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("error", "Estudante não encontrado");
+  });
+
+  it("should return 404 if project ID does not exist when removing a student", async () => {
+    const professorUser = await prisma.usuario.create({
+      data: {
+        nome: "Professor John",
+        email: "professor@example.com",
+        password: "password123",
+        role: "Professor",
+      },
+    });
+
+    const alunoUser = await prisma.usuario.create({
+      data: {
+        nome: "Aluno João",
+        email: "joao@example.com",
+        password: "password",
+        role: "Aluno",
+      },
+    });
+
+    const student = await prisma.aluno.create({
+      data: {
+        usuarioId: alunoUser.id,
+      },
+    });
+
+    token = jwt.sign(
+      { id: professorUser.id, role: professorUser.role },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    // Tenta remover o estudante de um projeto com ID inexistente
+    const nonExistentProjectId = 999;
+
+    const response = await request(app)
+      .delete(`/projetos/${nonExistentProjectId}/students/${student.id}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("error", "Projeto não encontrado");
+  });
+
+  it("should return 400 if project ID is invalid format when removing a student", async () => {
+    const professorUser = await prisma.usuario.create({
+      data: {
+        nome: "Professor John",
+        email: "professor@example.com",
+        password: "password123",
+        role: "Professor",
+      },
+    });
+
+    const alunoUser = await prisma.usuario.create({
+      data: {
+        nome: "Aluno João",
+        email: "joao@example.com",
+        password: "password",
+        role: "Aluno",
+      },
+    });
+
+    const student = await prisma.aluno.create({
+      data: {
+        usuarioId: alunoUser.id,
+      },
+    });
+
+    token = jwt.sign(
+      { id: professorUser.id, role: professorUser.role },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    const invalidProjectId = "invalidId";
+
+    const response = await request(app)
+      .delete(`/projetos/${invalidProjectId}/students/${student.id}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(500);
   });
 });
