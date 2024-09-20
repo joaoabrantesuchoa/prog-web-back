@@ -59,48 +59,138 @@ describe("Project Routes", () => {
     expect(response.body.titulo).toBe("New Project");
   });
 
-  it("should update a project", async () => {
-    const user = await prisma.usuario.create({
+  it("should add a student to a project", async () => {
+    const professorUser = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor2@example.com",
+        email: "professor3@example.com",
         password: "password123",
         role: "Professor",
       },
     });
-
+  
     const professor = await prisma.professor.create({
       data: {
-        usuarioId: user.id,
+        usuarioId: professorUser.id,
       },
     });
 
+    const alunoUser = await prisma.usuario.create({
+      data: {
+        nome: "Aluno João",
+        email: "joao@example.com",
+        password: "password",
+        role: "Aluno",
+      },
+    });
+
+    const student = await prisma.aluno.create({
+      data: {
+        usuarioId: alunoUser.id,
+      },
+    });
+  
     const project = await prisma.projeto.create({
       data: {
-        titulo: "Old Project",
-        descricao: "Old description",
+        titulo: "New Project",
+        descricao: "New project description",
         professorId: professor.id,
       },
     });
-
-    token = jwt.sign({ id: user.id, role: user.role }, SECRET_KEY, {
+  
+    token = jwt.sign({ id: professorUser.id, role: professorUser.role }, SECRET_KEY, {
       expiresIn: "1h",
     });
-
-    const updatedProject = {
-      titulo: "Updated Project",
-      descricao: "Updated description",
-    };
-
+  
     const response = await request(app)
-      .put(`/projetos/${project.id}`)
-      .set("Authorization", `Bearer ${token}`)
-      .send(updatedProject);
-
+      .post(`/projetos/${project.id}/students/${student.id}`)
+      .set("Authorization", `Bearer ${token}`);
+  
     expect(response.status).toBe(200);
-    expect(response.body.titulo).toBe("Updated Project");
-    expect(response.body.descricao).toBe("Updated description");
+    expect(response.body.registros).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          alunoId: student.id,
+          projetoId: project.id,
+          horasTrabalhadas: 0,
+        }),
+      ])
+    );
   });
+
+  it("should add and remove a student from a project", async () => {
+    const professorUser = await prisma.usuario.create({
+      data: {
+        nome: "Professor John",
+        email: "professor3@example.com",
+        password: "password123",
+        role: "Professor",
+      },
+    });
+  
+    const professor = await prisma.professor.create({
+      data: {
+        usuarioId: professorUser.id,
+      },
+    });
+  
+    const alunoUser = await prisma.usuario.create({
+      data: {
+        nome: "Aluno João",
+        email: "joao@example.com",
+        password: "password",
+        role: "Aluno",
+      },
+    });
+  
+    const student = await prisma.aluno.create({
+      data: {
+        usuarioId: alunoUser.id,
+      },
+    });
+  
+    const project = await prisma.projeto.create({
+      data: {
+        titulo: "New Project",
+        descricao: "New project description",
+        professorId: professor.id,
+      },
+    });
+  
+    token = jwt.sign({ id: professorUser.id, role: professorUser.role }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+  
+    let response = await request(app)
+      .post(`/projetos/${project.id}/students/${student.id}`)
+      .set("Authorization", `Bearer ${token}`);
+  
+    expect(response.status).toBe(200);
+    expect(response.body.registros).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          alunoId: student.id,
+          projetoId: project.id,
+          horasTrabalhadas: 0,
+        }),
+      ])
+    );
+  
+    response = await request(app)
+      .delete(`/projetos/${project.id}/students/${student.id}`)
+      .set("Authorization", `Bearer ${token}`);
+  
+    expect(response.status).toBe(200);
+    expect(response.body.registros).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          alunoId: student.id,
+          projetoId: project.id,
+        }),
+      ])
+    );
+  });
+  
 
   it("should delete a project", async () => {
     const user = await prisma.usuario.create({
@@ -133,8 +223,6 @@ describe("Project Routes", () => {
     const response = await request(app)
       .delete(`/projetos/${project.id}`)
       .set("Authorization", `Bearer ${token}`);
-
-    console.log({response})
 
     expect(response.status).toBe(204);
 

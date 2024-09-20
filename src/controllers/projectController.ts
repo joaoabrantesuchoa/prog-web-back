@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Project } from "../domain/models/project";
 import { z } from "zod";
+import { Student } from "../domain/models/student";
 
 const createProjectSchema = z.object({
   titulo: z.string().min(1, { message: "O título é obrigatório" }),
@@ -9,8 +10,8 @@ const createProjectSchema = z.object({
 });
 
 const projectStudentSchema = z.object({
-  projectId: z.string().regex(/^\d+$/, { message: "ID do projeto inválido" }),
-  studentId: z.string().regex(/^\d+$/, { message: "ID do aluno inválido" }),
+  projectId: z.string().min(1, { message: "ID do projeto inválido" }),
+  studentId: z.string().min(1, { message: "ID do aluno inválido" }),
 });
 
 const userIdSchema = z.object({
@@ -89,6 +90,7 @@ export const deleteProject = async (req: Request, res: Response) => {
 export const addStudentToProject = async (req: Request, res: Response) => {
   try {
     const validation = projectStudentSchema.safeParse(req.params);
+
     if (!validation.success) {
       return res
         .status(400)
@@ -96,9 +98,22 @@ export const addStudentToProject = async (req: Request, res: Response) => {
     }
 
     const { projectId, studentId } = validation.data;
+
+    const project = await Project.getProjectById(Number(projectId));
+
+    if (!project) {
+      return res.status(404).json({ error: "Projeto não encontrado" });
+    }
+
+    const student = await Student.getStudentById(Number(studentId));
+
+    if (!student) {
+      return res.status(404).json({ error: "Estudante não encontrado" });
+    }
+
     const updatedProject = await Project.addStudentToProject(
-      Number(projectId),
-      Number(studentId)
+      project.id,
+      student.id
     );
 
     res.status(200).json(updatedProject);
@@ -112,6 +127,7 @@ export const addStudentToProject = async (req: Request, res: Response) => {
 export const removeStudentFromProject = async (req: Request, res: Response) => {
   try {
     const validation = projectStudentSchema.safeParse(req.params);
+
     if (!validation.success) {
       return res
         .status(400)
@@ -119,9 +135,22 @@ export const removeStudentFromProject = async (req: Request, res: Response) => {
     }
 
     const { projectId, studentId } = validation.data;
+
+    const project = await Project.getProjectById(Number(projectId));
+
+    if (!project) {
+      return res.status(404).json({ error: "Projeto não encontrado" });
+    }
+
+    const student = await Student.getStudentById(Number(studentId));
+
+    if (!student) {
+      return res.status(404).json({ error: "Estudante não encontrado" });
+    }
+
     const updatedProject = await Project.removeStudentFromProject(
-      Number(projectId),
-      Number(studentId)
+      project.id,
+      student.id
     );
 
     res.status(200).json(updatedProject);

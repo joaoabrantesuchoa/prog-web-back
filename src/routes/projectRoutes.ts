@@ -20,11 +20,11 @@ router.post("/", authMiddleware([Role.Professor]), createProject);
 
 router.delete("/:id", authMiddleware([Role.Professor]), deleteProject);
 
-router.post("/:id/students/:studentId", authMiddleware([Role.Professor]), addStudentToProject);
+router.post("/:projectId/students/:studentId", authMiddleware([Role.Professor]), addStudentToProject);
 
 router.delete(
-  "/:id/students/:studentId",
-  authMiddleware,
+  "/:projectId/students/:studentId",
+  authMiddleware([Role.Professor]),
   removeStudentFromProject,
 );
 

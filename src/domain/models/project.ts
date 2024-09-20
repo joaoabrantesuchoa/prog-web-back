@@ -66,7 +66,7 @@ export class Project {
 
   static async updateProject(
     id: number,
-    data: Partial<Omit<Projeto, "id">>,
+    data: Partial<Omit<Projeto, "id">>
   ): Promise<Projeto | null> {
     return this.prisma.projeto.update({
       where: { id },
@@ -84,7 +84,7 @@ export class Project {
 
   static async addStudentToProject(
     projectId: number,
-    studentId: number,
+    studentId: number
   ): Promise<Projeto | null> {
     await this.prisma.registroHora.create({
       data: {
@@ -97,14 +97,18 @@ export class Project {
     return this.prisma.projeto.findUnique({
       where: { id: projectId },
       include: {
-        registros: true,
+        registros: {
+          include: {
+            aluno: true, 
+          },
+        },
       },
     });
   }
 
   static async removeStudentFromProject(
     projectId: number,
-    studentId: number,
+    studentId: number
   ): Promise<Projeto | null> {
     await this.prisma.registroHora.deleteMany({
       where: {
@@ -112,12 +116,12 @@ export class Project {
         projetoId: projectId,
       },
     });
-
+  
     return this.prisma.projeto.findUnique({
       where: { id: projectId },
       include: {
-        registros: true,
+        registros: true, 
       },
     });
-  }
+  }  
 }
