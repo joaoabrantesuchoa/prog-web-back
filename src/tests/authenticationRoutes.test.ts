@@ -2,32 +2,24 @@ import request from "supertest";
 import app from "../server"; // Certifique-se de que esse é o caminho correto para seu arquivo do Express
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from "vitest";
+import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 import { PrismaClient } from "@prisma/client";
+import { clearDatabase } from "../../prisma/seed";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT || "secret";
 
 describe("Authentication and Authorization Routes", () => {
-  beforeAll(async () => {
-    await prisma.professor.deleteMany({});
-    await prisma.usuario.deleteMany({});
+  beforeEach(async () => {
+    await clearDatabase();
   });
 
   afterEach(async () => {
-    await prisma.professor.deleteMany({});
-    await prisma.usuario.deleteMany({});
+    await clearDatabase();
   });
 
   afterAll(async () => {
+    await clearDatabase();
     await prisma.$disconnect();
   });
 
@@ -134,7 +126,7 @@ describe("Authentication and Authorization Routes", () => {
 
       expect(response.status).toBe(403);
       expect(response.text).toBe(
-        "Forbidden: You do not have the necessary permissions",
+        "Forbidden: You do not have the necessary permissions"
       );
     });
 

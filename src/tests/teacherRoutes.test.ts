@@ -3,25 +3,23 @@ import request from "supertest";
 import app from "../server";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
+import { clearDatabase } from "../../prisma/seed";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT || "secret";
 let token: string;
 
 describe("Teacher Routes", () => {
   beforeAll(async () => {
-    await prisma.professor.deleteMany({});
-    await prisma.usuario.deleteMany({});
+    await clearDatabase();
   });
 
   afterEach(async () => {
-    await prisma.professor.deleteMany({});
-    await prisma.usuario.deleteMany({});
+    await clearDatabase();
   });
 
   afterAll(async () => {
-    await prisma.professor.deleteMany({});
-    await prisma.usuario.deleteMany({});
+    await clearDatabase();
     await prisma.$disconnect();
   });
 
@@ -310,7 +308,7 @@ describe("Teacher Routes", () => {
 
     expect(response.status).toBe(403);
     expect(response.text).toBe(
-      "Forbidden: You do not have the necessary permissions",
+      "Forbidden: You do not have the necessary permissions"
     );
   });
 

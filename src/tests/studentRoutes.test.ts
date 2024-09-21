@@ -1,29 +1,32 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
+import { describe, it, expect, afterAll, afterEach } from "vitest";
 import request from "supertest";
 import app from "../server";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
+import { beforeEach } from "node:test";
+import { clearDatabase } from "../../prisma/seed";
 
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT || "secret";
 let token: string;
 
 describe("Student Routes", () => {
-  beforeAll(async () => {
-    await prisma.aluno.deleteMany({});
-    await prisma.usuario.deleteMany({});
+  beforeEach(async () => {
+    await clearDatabase();
   });
 
   afterEach(async () => {
-    await prisma.aluno.deleteMany({});
-    await prisma.usuario.deleteMany({});
+    await clearDatabase();
   });
 
   afterAll(async () => {
+    await clearDatabase();
     await prisma.$disconnect();
   });
 
   it("should create a student", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "John Doe",

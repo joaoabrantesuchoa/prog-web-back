@@ -1,34 +1,36 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
+import { describe, it, expect, afterAll } from "vitest";
 import request from "supertest";
 import app from "../server";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
+import { afterEach, beforeEach } from "node:test";
+import { clearDatabase } from "../../prisma/seed";
 
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT || "secret";
 let token: string;
 
 describe("Project Routes", () => {
-  beforeAll(async () => {
-    await prisma.projeto.deleteMany({});
-    await prisma.usuario.deleteMany({});
+  beforeEach(async () => {
+    await clearDatabase();
   });
 
   afterEach(async () => {
-    await prisma.projeto.deleteMany({});
-    await prisma.usuario.deleteMany({});
-  });
+    await clearDatabase();
+  })
 
   afterAll(async () => {
     await prisma.$disconnect();
   });
 
   it("should create a project", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -63,8 +65,8 @@ describe("Project Routes", () => {
     const professorUser = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor3@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -78,8 +80,8 @@ describe("Project Routes", () => {
     const alunoUser = await prisma.usuario.create({
       data: {
         nome: "Aluno João",
-        email: "joao@example.com",
-        password: "password",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Aluno",
       },
     });
@@ -126,8 +128,8 @@ describe("Project Routes", () => {
     const professorUser = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor3@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -141,8 +143,8 @@ describe("Project Routes", () => {
     const alunoUser = await prisma.usuario.create({
       data: {
         nome: "Aluno João",
-        email: "joao@example.com",
-        password: "password",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Aluno",
       },
     });
@@ -203,8 +205,8 @@ describe("Project Routes", () => {
     const user = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor3@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -241,11 +243,13 @@ describe("Project Routes", () => {
   });
 
   it("should list all projects", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor4@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -289,8 +293,8 @@ describe("Project Routes", () => {
     const user = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor5@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -326,8 +330,8 @@ describe("Project Routes", () => {
     const professorUser = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -369,8 +373,8 @@ describe("Project Routes", () => {
     const professorUser = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -384,8 +388,8 @@ describe("Project Routes", () => {
     const alunoUser = await prisma.usuario.create({
       data: {
         nome: "Aluno João",
-        email: "joao@example.com",
-        password: "password",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Aluno",
       },
     });
@@ -418,8 +422,8 @@ describe("Project Routes", () => {
     const professorUser = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -459,8 +463,8 @@ describe("Project Routes", () => {
     const professorUser = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -502,8 +506,8 @@ describe("Project Routes", () => {
     const professorUser = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -511,8 +515,8 @@ describe("Project Routes", () => {
     const alunoUser = await prisma.usuario.create({
       data: {
         nome: "Aluno João",
-        email: "joao@example.com",
-        password: "password",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Aluno",
       },
     });
@@ -546,8 +550,8 @@ describe("Project Routes", () => {
     const professorUser = await prisma.usuario.create({
       data: {
         nome: "Professor John",
-        email: "professor@example.com",
-        password: "password123",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Professor",
       },
     });
@@ -555,8 +559,8 @@ describe("Project Routes", () => {
     const alunoUser = await prisma.usuario.create({
       data: {
         nome: "Aluno João",
-        email: "joao@example.com",
-        password: "password",
+        email: `email${Math.random()}@example.com`,
+        password: `${Math.random()}`,
         role: "Aluno",
       },
     });

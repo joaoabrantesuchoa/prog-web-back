@@ -74,16 +74,18 @@ model Atividade {
   titulo           String           @db.VarChar(200)
   descricao        String?
   horasNecessarias Int
-  projeto          Projeto          @relation(fields: [projetoId], references: [id])
+  projeto          Projeto          @relation(fields: [projetoId], references: [id], onDelete: Cascade)
   projetoId        Int
   alunos           AtividadeAluno[]
 }
 
 model AtividadeAluno {
   id          Int       @id @default(autoincrement())
-  atividade   Atividade @relation(fields: [atividadeId], references: [id])
+  atividade   Atividade @relation(fields: [atividadeId], references: [id], onDelete: Cascade)
   atividadeId Int
-  aluno       Aluno     @relation(fields: [alunoId], references: [id])
+  aluno       Aluno     @relation(fields: [alunoId], references: [id], onDelete: Cascade)
   alunoId     Int
   status      StatusAtividade @default(PENDENTE)
+
+  @@unique([alunoId, atividadeId]) 
 }

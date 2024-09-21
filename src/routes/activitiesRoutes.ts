@@ -5,21 +5,26 @@ import {
   createActivity,
   getActivitiesByStatus,
 } from "../controllers/activityController";
+import { Role } from "@prisma/client";
 
 const router = Router();
 
-router.post("/project/:id", authMiddleware, createActivity);
+router.post(
+  "/create/:projectId",
+  authMiddleware([Role.Professor]),
+  createActivity
+);
 
 router.put(
-  "aluno/:alunoId/activities/:id/conclude",
-  authMiddleware,
-  concludeActivity,
+  "/aluno/:alunoId/atividade/:atividadeId/conclude",
+  authMiddleware([Role.Professor, Role.Aluno]),
+  concludeActivity
 );
 
 router.get(
-  "aluno/:alunoId/activities/status/:status",
-  authMiddleware,
-  getActivitiesByStatus,
+  "/aluno/:alunoId/atividade/status/:status",
+  authMiddleware([Role.Professor, Role.Aluno]),
+  getActivitiesByStatus
 );
 
 export default router;

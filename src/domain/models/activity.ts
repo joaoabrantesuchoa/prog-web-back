@@ -1,4 +1,4 @@
-import { PrismaClient, Atividade } from "@prisma/client";
+import { PrismaClient, Atividade, AtividadeAluno } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -18,7 +18,7 @@ export class Activity {
 
   static async assignActivityToStudents(
     projetoId: number,
-    atividadeId: number,
+    atividadeId: number
   ) {
     const students = await prisma.aluno.findMany({
       where: { registros: { some: { projetoId } } },
@@ -27,21 +27,42 @@ export class Activity {
     const createActivityPromises = students.map((student) =>
       prisma.atividadeAluno.create({
         data: {
-          atividadeId,
+          atividadeId: atividadeId,
           alunoId: student.id,
           status: "PENDENTE",
         },
-      }),
+      })
     );
 
     return await prisma.$transaction(createActivityPromises);
   }
 
-  static async concludeActivity(alunoId: number, atividadeId: number) {
-    return this.prisma.atividadeAluno.updateMany({
+  static async concludeActivity(
+    alunoId: number,
+    atividadeId: number
+  ): Promise<AtividadeAluno | null> {
+    const atividadeAluno = await this.prisma.atividadeAluno.findUnique({
       where: {
-        alunoId,
-        atividadeId,
+        alunoId_atividadeId: {
+          alunoId,
+          atividadeId,
+        },
+      },
+    });
+
+    console.log({ atividadeAluno });
+
+    if (!atividadeAluno) {
+      throw new Error("Atividade não encontrada ou não associada ao aluno");
+    }
+
+    if (atividadeAluno.status === "CONCLUIDA") {
+      throw new Error("Atividade já está concluída");
+    }
+
+    return this.prisma.atividadeAluno.update({
+      where: {
+        id: atividadeAluno.id,
       },
       data: {
         status: "CONCLUIDA",
@@ -52,7 +73,7 @@ export class Activity {
   static async getActivitiesByStatus(
     alunoId: number,
     projetoId: number,
-    status: "PENDENTE" | "CONCLUIDA",
+    status: "PENDENTE" | "CONCLUIDA"
   ) {
     return this.prisma.atividadeAluno.findMany({
       where: {
