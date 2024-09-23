@@ -1,29 +1,21 @@
-import { describe, it, expect, afterAll, afterEach } from "vitest";
+import { describe, it, expect, beforeAll, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../server";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
-import { beforeEach } from "node:test";
-import { clearDatabase } from "../../prisma/seed";
+import prisma, { clearDatabase } from "../../prisma/prismaTest";
 
-const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT || "secret";
 let token: string;
 
+beforeAll(async () => {
+  await clearDatabase();
+});
+
+beforeEach(async () => {
+  await clearDatabase();
+});
+
 describe("Student Routes", () => {
-  beforeEach(async () => {
-    await clearDatabase();
-  });
-
-  afterEach(async () => {
-    await clearDatabase();
-  });
-
-  afterAll(async () => {
-    await clearDatabase();
-    await prisma.$disconnect();
-  });
-
   it("should create a student", async () => {
     await clearDatabase();
 
@@ -57,6 +49,8 @@ describe("Student Routes", () => {
   });
 
   it("should get all students", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "Jane Doe",
@@ -85,6 +79,8 @@ describe("Student Routes", () => {
   });
 
   it("should get a student by ID", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "Jane Smith",
@@ -114,6 +110,8 @@ describe("Student Routes", () => {
   });
 
   it("should update a student", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "Michael Doe",
@@ -162,6 +160,8 @@ describe("Student Routes", () => {
   });
 
   it("should delete a student", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "Lisa Doe",
@@ -189,6 +189,8 @@ describe("Student Routes", () => {
   });
 
   it("should return 404 for non-existing student on GET by ID", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "John Doe",
@@ -211,6 +213,8 @@ describe("Student Routes", () => {
   });
 
   it("should return 400 for invalid data on POST create student", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "John Doe",
@@ -239,6 +243,8 @@ describe("Student Routes", () => {
   });
 
   it("should return 400 for invalid data on PUT update student", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "John Doe",
@@ -279,6 +285,8 @@ describe("Student Routes", () => {
   });
 
   it("should return 401 for unauthorized access", async () => {
+    await clearDatabase();
+
     const response = await request(app)
       .get("/alunos")
       .set("Authorization", "Bearer invalidtoken");
@@ -287,6 +295,8 @@ describe("Student Routes", () => {
   });
 
   it("should return 403 for forbidden access", async () => {
+    await clearDatabase();
+
     const user = await prisma.usuario.create({
       data: {
         nome: "Admin User",

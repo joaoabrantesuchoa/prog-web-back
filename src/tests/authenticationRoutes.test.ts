@@ -1,28 +1,21 @@
 import request from "supertest";
-import app from "../server"; // Certifique-se de que esse é o caminho correto para seu arquivo do Express
+import app from "../server";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
-import { PrismaClient } from "@prisma/client";
-import { clearDatabase } from "../../prisma/seed";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import prisma, { clearDatabase } from "../../prisma/prismaTest";
 
-const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT || "secret";
 
+beforeAll(async () => {
+  await clearDatabase();
+});
+
+beforeEach(async () => {
+  await clearDatabase();
+});
+
 describe("Authentication and Authorization Routes", () => {
-  beforeEach(async () => {
-    await clearDatabase();
-  });
-
-  afterEach(async () => {
-    await clearDatabase();
-  });
-
-  afterAll(async () => {
-    await clearDatabase();
-    await prisma.$disconnect();
-  });
-
   describe("POST /register", () => {
     it("should register a new user", async () => {
       const newUser = {

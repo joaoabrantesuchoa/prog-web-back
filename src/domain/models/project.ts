@@ -16,7 +16,6 @@ export class Project {
   }
 
   static async getProjectsByUserId(userId: number): Promise<Projeto[]> {
-    // Primeiro, obtemos o usuário e verificamos o papel dele
     const user = await this.prisma.usuario.findUnique({
       where: { id: userId },
       include: {

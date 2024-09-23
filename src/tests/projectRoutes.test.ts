@@ -1,28 +1,21 @@
-import { describe, it, expect, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../server";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
-import { afterEach, beforeEach } from "node:test";
-import { clearDatabase } from "../../prisma/seed";
+import prisma, { clearDatabase } from "../../prisma/prismaTest";
 
-const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT || "secret";
 let token: string;
 
+beforeAll(async () => {
+  await clearDatabase();
+});
+
+beforeEach(async () => {
+  await clearDatabase();
+});
+
 describe("Project Routes", () => {
-  beforeEach(async () => {
-    await clearDatabase();
-  });
-
-  afterEach(async () => {
-    await clearDatabase();
-  })
-
-  afterAll(async () => {
-    await prisma.$disconnect();
-  });
-
   it("should create a project", async () => {
     await clearDatabase();
 

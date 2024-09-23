@@ -34,7 +34,9 @@ export class Activity {
       })
     );
 
-    return await prisma.$transaction(createActivityPromises);
+    const activities = await prisma.$transaction(createActivityPromises);
+
+    return activities;
   }
 
   static async concludeActivity(
@@ -49,8 +51,6 @@ export class Activity {
         },
       },
     });
-
-    console.log({ atividadeAluno });
 
     if (!atividadeAluno) {
       throw new Error("Atividade não encontrada ou não associada ao aluno");

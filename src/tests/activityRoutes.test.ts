@@ -1,29 +1,23 @@
-import { describe, it, expect, afterAll, afterEach } from "vitest";
+import { describe, it, expect, beforeAll, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../server";
 import jwt from "jsonwebtoken";
-//import { PrismaClient } from "@prisma/client";
-import { beforeEach } from "node:test";
-import { clearDatabase } from "../../prisma/seed";
-import prisma from "../../prisma/prismaTest";
+import prisma, { clearDatabase } from "../../prisma/prismaTest";
+import { StatusAtividade } from "@prisma/client";
 
-//const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT || "secret";
+let tokenProfessor: string;
+let tokenAluno: string;
+
+beforeAll(async () => {
+  await clearDatabase();
+});
+
+beforeEach(async () => {
+  await clearDatabase();
+});
 
 describe("Activity Routes", () => {
-  beforeEach(async () => {
-    await clearDatabase();
-  });
-
-  afterEach(async () => {
-    await clearDatabase();
-  });
-
-  afterAll(async () => {
-    await clearDatabase();
-    await prisma.$disconnect();
-  });
-
   it("should create an activity", async () => {
     const professorUser = await prisma.usuario.create({
       data: {
@@ -63,17 +57,17 @@ describe("Activity Routes", () => {
       },
     });
 
-    const tokenProfessor = jwt.sign(
+    tokenProfessor = jwt.sign(
       { id: professorUser.id, role: professorUser.role },
       SECRET_KEY,
       { expiresIn: "1h" }
     );
 
-    /*const tokenAluno = jwt.sign(
+    tokenAluno = jwt.sign(
       { id: alunoUser.id, role: alunoUser.role },
       SECRET_KEY,
       { expiresIn: "1h" }
-    );*/
+    );
 
     const newActivity = {
       titulo: "Nova Atividade",
@@ -92,7 +86,7 @@ describe("Activity Routes", () => {
     expect(response.body.horasNecessarias).toBe(5);
   });
 
-  /*it("should conclude an activity for a student", async () => {
+  it("should conclude an activity for a student", async () => {
     await clearDatabase();
 
     const professorUser = await prisma.usuario.create({
@@ -156,14 +150,14 @@ describe("Activity Routes", () => {
       .set("Authorization", `Bearer ${tokenProfessor}`)
       .send(newActivity);
 
-    const atividade = createActivityResponse.body
+    const atividade = createActivityResponse.body;
 
-    const response = await request(app)
+    const concludeActivityResponse = await request(app)
       .put(`/atividades/aluno/${aluno.id}/atividade/${atividade.id}/conclude`)
       .set("Authorization", `Bearer ${tokenAluno}`);
 
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty(
+    expect(concludeActivityResponse.status).toBe(200);
+    expect(concludeActivityResponse.body).toHaveProperty(
       "message",
       "Atividade concluída com sucesso"
     );
@@ -172,10 +166,8 @@ describe("Activity Routes", () => {
       where: { alunoId: aluno.id, atividadeId: atividade.id },
     });
 
-    console.log({ atividadeConcluida });
-
     expect(atividadeConcluida?.status).toBe(StatusAtividade.CONCLUIDA);
-  });*/
+  });
 
   /*it("should return error when concluding a non-existing activity", async () => {
     const response = await request(app)
