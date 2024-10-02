@@ -33,7 +33,6 @@ export class Project {
         where: { professorId: user.Professor.id },
         include: {
           professor: true,
-          Atividade: true,
           registros: true,
         },
       });
@@ -48,7 +47,6 @@ export class Project {
         },
         include: {
           professor: true,
-          Atividade: true,
           registros: true,
         },
       });
@@ -98,7 +96,7 @@ export class Project {
       include: {
         registros: {
           include: {
-            aluno: true, 
+            aluno: true,
           },
         },
       },
@@ -115,12 +113,12 @@ export class Project {
         projetoId: projectId,
       },
     });
-  
+
     return this.prisma.projeto.findUnique({
       where: { id: projectId },
       include: {
-        registros: true, 
+        registros: true,
       },
     });
-  }  
+  }
 }

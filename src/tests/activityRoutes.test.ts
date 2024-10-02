@@ -4,6 +4,7 @@ import app from "../server";
 import jwt from "jsonwebtoken";
 import prisma, { clearDatabase } from "../../prisma/prismaTest";
 import { StatusAtividade } from "@prisma/client";
+import { Project } from "../domain/models/project";
 
 const SECRET_KEY = process.env.JWT || "secret";
 let tokenProfessor: string;
@@ -138,6 +139,8 @@ describe("Activity Routes", () => {
       SECRET_KEY,
       { expiresIn: "1h" }
     );
+
+    await Project.addStudentToProject(projeto.id, aluno.id);
 
     const newActivity = {
       titulo: "Nova Atividade",

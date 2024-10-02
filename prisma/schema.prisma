@@ -23,7 +23,6 @@ enum StatusAtividade {
   CONCLUIDA
 }
 
-
 model Usuario {
   id        Int        @id @default(autoincrement())
   nome      String     @db.VarChar(100)
@@ -42,10 +41,11 @@ model Professor {
 }
 
 model Aluno {
-  id             Int              @id @default(autoincrement())
-  registros      RegistroHora[]
-  usuario        Usuario          @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  usuarioId      Int              @unique
+  id        Int            @id @default(autoincrement())
+  registros RegistroHora[]
+  usuario   Usuario        @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuarioId Int            @unique
+
   AtividadeAluno AtividadeAluno[]
 }
 
@@ -56,7 +56,7 @@ model Projeto {
   professor   Professor      @relation(fields: [professorId], references: [id])
   professorId Int
   registros   RegistroHora[]
-  Atividade   Atividade[]
+  atividades  Atividade[]
 }
 
 model RegistroHora {
@@ -76,16 +76,16 @@ model Atividade {
   horasNecessarias Int
   projeto          Projeto          @relation(fields: [projetoId], references: [id], onDelete: Cascade)
   projetoId        Int
-  alunos           AtividadeAluno[]
+  alunos           AtividadeAluno[] 
 }
 
 model AtividadeAluno {
-  id          Int       @id @default(autoincrement())
-  atividade   Atividade @relation(fields: [atividadeId], references: [id], onDelete: Cascade)
-  atividadeId Int
-  aluno       Aluno     @relation(fields: [alunoId], references: [id], onDelete: Cascade)
+  id          Int             @id @default(autoincrement())
+  aluno       Aluno           @relation(fields: [alunoId], references: [id], onDelete: Cascade)
   alunoId     Int
+  atividade   Atividade       @relation(fields: [atividadeId], references: [id], onDelete: Cascade)
+  atividadeId Int
   status      StatusAtividade @default(PENDENTE)
 
-  @@unique([alunoId, atividadeId]) 
+  @@unique([alunoId, atividadeId])
 }

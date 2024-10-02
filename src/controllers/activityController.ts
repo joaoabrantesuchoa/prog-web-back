@@ -59,10 +59,7 @@ export const createActivity = async (req: Request, res: Response) => {
       horasNecessarias,
     });
 
-    await Activity.assignActivityToStudents(
-      Number(projectId),
-      newActivity.id
-    );
+    await Activity.assignActivityToStudents(Number(projectId), newActivity.id);
 
     res.status(201).json(newActivity);
   } catch (error) {
