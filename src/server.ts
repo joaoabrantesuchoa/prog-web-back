@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { json } from "body-parser";
 import teacherRoutes from "./routes/teacherRoutes";
 import studentRoutes from "./routes/studentRoutes";
@@ -8,6 +9,14 @@ import activitiesRoutes from "./routes/activitiesRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use(json());
 app.use("/professores", teacherRoutes);
