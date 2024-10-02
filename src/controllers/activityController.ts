@@ -117,13 +117,6 @@ export const getActivitiesByStatus = async (req: Request, res: Response) => {
       status
     );
 
-    if (activities.length === 0) {
-      return res.status(404).json({
-        code: "NOT_FOUND",
-        message: `Nenhuma atividade ${status.toLowerCase()} encontrada`,
-      });
-    }
-
     res.status(200).json(activities);
   } catch (error) {
     res.status(500).json({

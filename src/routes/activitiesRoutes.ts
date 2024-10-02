@@ -22,7 +22,7 @@ router.put(
 );
 
 router.get(
-  "/aluno/:alunoId/atividade/status/:status",
+  "/aluno/:alunoId/projeto/:projetoId/atividade/status/:status",
   authMiddleware([Role.Professor, Role.Aluno]),
   getActivitiesByStatus
 );
