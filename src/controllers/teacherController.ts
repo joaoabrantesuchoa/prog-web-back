@@ -93,10 +93,13 @@ export const updateTeacher = async (req: Request, res: Response) => {
     });
 
     if (updated) {
-      const updatedTeacher = await Teacher.getTeacherById(
+      const updatedTeacher = await Teacher.getTeacherByIdOrFail(
         Number(req.params.id)
       );
-      res.json(updatedTeacher);
+
+      const updatedUserInformations = await User.getUserById(updatedTeacher.usuarioId)
+
+      res.json(updatedUserInformations);
     } else {
       res.status(404).json({ error: "Professor não encontrado" });
     }
@@ -115,7 +118,7 @@ export const deleteTeacher = async (req: Request, res: Response) => {
 
     const deleted = await Teacher.deleteTeacher(teacherId);
     if (deleted) {
-      res.status(204).send();
+      res.status(204).json("Professor deletado com sucesso");
     } else {
       res.status(404).json({ error: "Professor não encontrado" });
     }

@@ -88,7 +88,7 @@ export const createStudent = async (req: Request, res: Response) => {
 export const updateStudent = async (req: Request, res: Response) => {
   try {
     const validation = updateStudentSchema.safeParse(req.body);
-    
+
     if (!validation.success) {
       return res.status(400).json({ error: validation.error.errors });
     }
@@ -99,10 +99,15 @@ export const updateStudent = async (req: Request, res: Response) => {
     });
 
     if (updated) {
-      const updatedStudent = await Student.getStudentById(
+      const updatedStudent = await Student.getStudentByIdOrFail(
         Number(req.params.id)
       );
-      res.json(updatedStudent);
+
+      const updatedUserInformations = await User.getUserById(
+        updatedStudent.usuarioId
+      );
+
+      res.json(updatedUserInformations);
     } else {
       res.status(404).json({ error: "Aluno não encontrado" });
     }
@@ -110,7 +115,6 @@ export const updateStudent = async (req: Request, res: Response) => {
     res.status(500).json({ error: `Falha ao atualizar o aluno: ${error}` });
   }
 };
-
 
 export const deleteStudent = async (req: Request, res: Response) => {
   try {

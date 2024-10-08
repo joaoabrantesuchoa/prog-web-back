@@ -149,7 +149,8 @@ describe("Student Routes", () => {
       .send(updatedStudentData);
 
     expect(response.status).toBe(200);
-    expect(response.body.usuarioId).toBe(user.id);
+    expect(response.body.nome).toBe(updatedStudentData.nome);
+    expect(response.body.email).toBe(updatedStudentData.email);
 
     const updatedUser = await prisma.usuario.findUnique({
       where: { id: user.id },

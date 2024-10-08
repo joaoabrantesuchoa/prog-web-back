@@ -15,6 +15,12 @@ export class Student {
     });
   }
 
+  static async getStudentByIdOrFail(id: number): Promise<Aluno> {
+    return this.prisma.aluno.findUniqueOrThrow({
+      where: { id },
+    });
+  }
+
   static async createStudent(data: Omit<Aluno, "id">): Promise<Aluno> {
     return this.prisma.aluno.create({
       data,

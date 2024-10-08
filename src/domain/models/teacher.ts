@@ -15,6 +15,12 @@ export class Teacher {
     });
   }
 
+  static async getTeacherByIdOrFail(id: number): Promise<Professor> {
+    return this.prisma.professor.findUniqueOrThrow({
+      where: { id },
+    });
+  }
+
   static async createTeacher(data: Omit<Professor, "id">): Promise<Professor> {
     return this.prisma.professor.create({
       data,
