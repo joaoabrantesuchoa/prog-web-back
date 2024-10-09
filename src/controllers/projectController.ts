@@ -37,7 +37,7 @@ export const getProjectFromUserId = async (req: Request, res: Response) => {
     }
 
     const userId = Number(req.params.id);
-    const users = await Project.getProjectById(userId);
+    const users = await Project.getProjectsByUserId(userId);
 
     if (users) {
       res.json(users);

@@ -282,7 +282,7 @@ describe("Project Routes", () => {
     expect(response.body[1]).toHaveProperty("titulo", "Project 2");
   });
 
-  it("should get a project by ID", async () => {
+  it("should get the projects from a user id", async () => {
     const user = await prisma.usuario.create({
       data: {
         nome: "Professor John",
@@ -311,12 +311,15 @@ describe("Project Routes", () => {
     });
 
     const response = await request(app)
-      .get(`/projetos/${project.id}`)
+      .get(`/projetos/${user.id}`)
       .set("Authorization", `Bearer ${token}`);
 
+      console.log(response.body)
+
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("id", project.id);
-    expect(response.body).toHaveProperty("titulo", "Single Project");
+    expect(response.body[0]).toHaveProperty("id", project.id);
+    expect(response.body[0]).toHaveProperty("titulo", "Single Project");
+    expect(response.body[0]).toHaveProperty("professorId", professor.id);
   });
 
   it("should return 404 if student ID does not exist when adding to project", async () => {
